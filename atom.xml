@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://icoobin.github.io</id>
     <title>iCoobin</title>
-    <updated>2021-05-29T12:24:50.081Z</updated>
+    <updated>2021-05-29T12:26:49.187Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://icoobin.github.io"/>
     <link rel="self" href="https://icoobin.github.io/atom.xml"/>
@@ -10,4 +10,11 @@
     <logo>https://icoobin.github.io/images/avatar.png</logo>
     <icon>https://icoobin.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, iCoobin</rights>
+    <entry>
+        <title type="html"><![CDATA[iOS 14 Widget]]></title>
+        <id>https://icoobin.github.io/post/DIRlWFo60/</id>
+        <link href="https://icoobin.github.io/post/DIRlWFo60/">
+        </link>
+        <updated>2021-05-29T12:25:22.000Z</updated>
+    </entry>
 </feed>
