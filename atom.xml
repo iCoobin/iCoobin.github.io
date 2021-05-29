@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://icoobin.github.io</id>
-    <title>Gridea</title>
-    <updated>2021-05-29T11:22:32.578Z</updated>
+    <title>iCoobin</title>
+    <updated>2021-05-29T11:24:20.734Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://icoobin.github.io"/>
     <link rel="self" href="https://icoobin.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://icoobin.github.io/images/avatar.png</logo>
     <icon>https://icoobin.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2021, Gridea</rights>
+    <rights>All rights reserved 2021, iCoobin</rights>
     <entry>
         <title type="html"><![CDATA[测试gridea]]></title>
         <id>https://icoobin.github.io/post/ce-shi-gridea/</id>
