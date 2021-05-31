@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>iCoobin</title>
+<title>Hello World! | iCoobin</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -12,14 +12,21 @@
 <link rel="stylesheet" href="https://icoobin.github.io/styles/main.css">
 
 
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
+
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
 
-    <meta name="description" content="温故而知新">
-    
+    <meta name="description" content="Hello World!Hello World!Hello World!
+" />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -77,42 +84,35 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://icoobin.github.io/post/32EN_6ho6/">
-                  <h2 class="post-title">Hello World!</h2>
-                </a>
-                <div class="post-date">
-                  2021-05-31
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://icoobin.github.io/post/EOJ6cTDCu/">
-                  <h2 class="post-title">测试一下Gridea</h2>
-                </a>
-                <div class="post-date">
-                  2021-05-29
-                </div>
-                <div class="post-abstract">
-                  
-                </div>
-              </div>
-              
-            </article>
-          
+          <div class="post-detail">
+            <h2 class="post-title">Hello World!</h2>
+            <div class="post-date">2021-05-31</div>
+            
+            <div class="post-content" v-pre>
+              <p>Hello World!Hello World!Hello World!</p>
 
-          <div class="pagination-container">
-  
-  
-</div>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://icoobin.github.io/post/EOJ6cTDCu/">
+                  <h3 class="post-title">
+                    测试一下Gridea
+                  </h3>
+                </a>
+              </div>
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
 
         </div>
       </div>
@@ -133,6 +133,29 @@ var app = new Vue({
 </script>
 
 
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'ced860048fe3a59e9634',
+        clientSecret: '5fc70662b172bc3afed802cc02a26ef4155192dd',
+        repo: 'iCoobin.github.io',
+        owner: 'iCoobin',
+        admin: ['iCoobin'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 
