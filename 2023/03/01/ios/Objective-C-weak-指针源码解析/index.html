@@ -20,7 +20,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Objective-C weak 指针源码解析">
 <meta property="og:url" content="https://icoobin.github.io/2023/03/01/ios/Objective-C-weak-%E6%8C%87%E9%92%88%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/index.html">
-<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:site_name" content="Bin&#39;s Blog">
 <meta property="og:description" content="weak 指针原理底层管理Objective-C 维护 weak 指针的哈希表的源码主要在objc-weak.mm文件中。这个文件包含了 runtime 中维护弱引用表的相关代码，比如weak指针的创建、释放、读取和写入等操作。其中，弱引用表是用一个哈希表来实现的，哈希表的每个桶都是一个指向对象的指针，当对象被释放时，哈希表会自动将这个指针设置为nil。  这里注释已经说明是存放在全局的 weak">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-01T15:06:51.000Z">
@@ -34,7 +34,7 @@
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Objective-C weak 指针源码解析 - Bin&#39;s blog</title>
+  <title>Objective-C weak 指针源码解析 - Bin&#39;s Blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
