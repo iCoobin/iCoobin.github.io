@@ -1,0 +1,885 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Objective-C 容易被忽略的内存对齐什么是结构体内存对齐结构体内存对齐是指编译器在给结构体分配内存时，为了提高内存访问效率，在结构体的成员变量之间加上一些空余的字节。这些空余的字节的大小取决于编译器的对齐方式和结构体成员变量的大小。 在默认情况下，编译器会按照结构体成员变量大小的最大值来进行对齐，即按照 8 字节对齐。因此，结构体中的 int 类型变量会被对齐到 4 字节的倍数上，doub">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Objective-C 容易被忽略的内存对齐">
+<meta property="og:url" content="https://icoobin.github.io/2023/03/02/ios/Objective-C-%E5%AE%B9%E6%98%93%E8%A2%AB%E5%BF%BD%E7%95%A5%E7%9A%84%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="Objective-C 容易被忽略的内存对齐什么是结构体内存对齐结构体内存对齐是指编译器在给结构体分配内存时，为了提高内存访问效率，在结构体的成员变量之间加上一些空余的字节。这些空余的字节的大小取决于编译器的对齐方式和结构体成员变量的大小。 在默认情况下，编译器会按照结构体成员变量大小的最大值来进行对齐，即按照 8 字节对齐。因此，结构体中的 int 类型变量会被对齐到 4 字节的倍数上，doub">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-02T11:14:19.000Z">
+<meta property="article:modified_time" content="2023-03-18T08:43:25.808Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Objective-C">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Objective-C 容易被忽略的内存对齐 - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Objective-C 容易被忽略的内存对齐"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-02 19:14" pubdate>
+          2023年3月2日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          29 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Objective-C 容易被忽略的内存对齐</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Objective-C-容易被忽略的内存对齐"><a href="#Objective-C-容易被忽略的内存对齐" class="headerlink" title="Objective-C 容易被忽略的内存对齐"></a>Objective-C 容易被忽略的内存对齐</h1><h2 id="什么是结构体内存对齐"><a href="#什么是结构体内存对齐" class="headerlink" title="什么是结构体内存对齐"></a>什么是结构体内存对齐</h2><p>结构体内存对齐是指编译器在给结构体分配内存时，为了提高内存访问效率，在结构体的成员变量之间加上一些空余的字节。这些空余的字节的大小取决于编译器的对齐方式和结构体成员变量的大小。</p>
+<p>在默认情况下，编译器会按照结构体成员变量大小的最大值来进行对齐，即按照 8 字节对齐。因此，结构体中的 int 类型变量会被对齐到 4 字节的倍数上，double 类型变量会被对齐到 8 字节的倍数上。</p>
+<h2 id="什么情况下会导致多申请内存"><a href="#什么情况下会导致多申请内存" class="headerlink" title="什么情况下会导致多申请内存"></a>什么情况下会导致多申请内存</h2><p>短类型与长类型间隔声明会导致多申请内存，我们来看下面相同成员属性的两个不同列子</p>
+<h3 id="例子1"><a href="#例子1" class="headerlink" title="例子1"></a>例子1</h3><ul>
+<li>8个字节长类型 double 前面还有没对齐的4个字节的短类型（会导致4个字节空间浪费）</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-class"><span class="hljs-keyword">@interface</span> <span class="hljs-title">Person</span> : <span class="hljs-title">NSObject</span> </span>&#123;
+    <span class="hljs-keyword">@public</span>
+    <span class="hljs-type">int</span> _age;
+    <span class="hljs-type">double</span> no;  <span class="hljs-comment">/// &lt;- 长类型夹在没对齐的短类型中间</span>
+    <span class="hljs-type">int</span> _a;
+    <span class="hljs-type">int</span> _b;
+    <span class="hljs-type">int</span> _c;
+&#125;
+<span class="hljs-keyword">@end</span>
+<span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">Person</span></span>
+<span class="hljs-keyword">@end</span>
+<span class="hljs-type">int</span> main(<span class="hljs-type">int</span> argc, <span class="hljs-keyword">const</span> <span class="hljs-type">char</span> * argv[]) &#123;
+    <span class="hljs-keyword">@autoreleasepool</span> &#123;
+        Person *p = [[Person alloc] init];
+        <span class="hljs-comment">/// 获得 obj 指针指向内存的大小</span>
+        <span class="hljs-comment">/// (__bridge const void *) (obj )</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;malloc size:%zd&quot;</span>, malloc_size((__bridge <span class="hljs-keyword">const</span> <span class="hljs-type">void</span> *)(p)));
+        <span class="hljs-comment">/// 获取 NSObject 累的实例对象的大小</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;use size:%zd&quot;</span>, class_getInstanceSize([Person <span class="hljs-keyword">class</span>]));
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre></div>
+<div class="code-wrapper"><pre><code class="hljs sh"><span class="hljs-comment"># 终端打印</span>
+malloc size:48
+use size:40</code></pre></div>
+<h3 id="例子2"><a href="#例子2" class="headerlink" title="例子2"></a>例子2</h3><div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-class"><span class="hljs-keyword">@interface</span> <span class="hljs-title">Person</span> : <span class="hljs-title">NSObject</span> </span>&#123;
+    <span class="hljs-keyword">@public</span>
+    <span class="hljs-type">int</span> _age;
+    <span class="hljs-type">int</span> _a;
+    <span class="hljs-type">double</span> no;  <span class="hljs-comment">/// &lt;- 长类型夹在中间，但前面内存已经对齐</span>
+    <span class="hljs-type">int</span> _b;
+    <span class="hljs-type">int</span> _c;
+&#125;
+<span class="hljs-keyword">@end</span>
+<span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">Person</span></span>
+<span class="hljs-keyword">@end</span>
+<span class="hljs-type">int</span> main(<span class="hljs-type">int</span> argc, <span class="hljs-keyword">const</span> <span class="hljs-type">char</span> * argv[]) &#123;
+    <span class="hljs-keyword">@autoreleasepool</span> &#123;
+        Person *p = [[Person alloc] init];
+        <span class="hljs-comment">/// 获得 obj 指针指向内存的大小</span>
+        <span class="hljs-comment">/// (__bridge const void *) (obj )</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;malloc size:%zd&quot;</span>, malloc_size((__bridge <span class="hljs-keyword">const</span> <span class="hljs-type">void</span> *)(p)));
+        <span class="hljs-comment">/// 获取 NSObject 累的实例对象的大小</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;use size:%zd&quot;</span>, class_getInstanceSize([Person <span class="hljs-keyword">class</span>]));
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre></div>
+<div class="code-wrapper"><pre><code class="hljs sh"><span class="hljs-comment">#终端打印</span>
+malloc size:32
+use size:32</code></pre></div>
+
+<ul>
+<li>例子1: persion 对象申请占用了48 字节的内存空间，结构体内存对齐实际使用了 40 字节。</li>
+<li>例子2：person 对象申请占用了 32  字节的内存空间，实际使用 32 字节</li>
+<li>上面的两个例子相同的对象属性，仅因为属性声明排序的不同，而多出浪费掉 16 字节的存储空间</li>
+<li>可以看出系统并不会自动优化对象结构体内部属性在内存中的存储顺序，而是按代码声明的顺序存储，如果不注意内存对齐，中间就会有很多的内存空隙没有被使用到，从而导致内存浪费的情况</li>
+</ul>
+<h2 id="养成好开发习惯"><a href="#养成好开发习惯" class="headerlink" title="养成好开发习惯"></a>养成好开发习惯</h2><ul>
+<li>基于对系统内存对齐的认识，我们应该养成好的开发习惯</li>
+<li>可以养成习惯的将长类型的属性声明在前面，这样就可以很好的利用好结构体内存对齐特性，避免更多的内存浪费</li>
+</ul>
+<p>如下：</p>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-class"><span class="hljs-keyword">@interface</span> <span class="hljs-title">Person</span> : <span class="hljs-title">NSObject</span> </span>&#123;
+    <span class="hljs-keyword">@public</span>
+    <span class="hljs-type">double</span> no;  <span class="hljs-comment">/// &lt;- 长类型放前面</span>
+    <span class="hljs-type">int</span> _age;
+    <span class="hljs-type">int</span> _a;
+    <span class="hljs-type">int</span> _b;
+    <span class="hljs-type">int</span> _c;
+&#125;
+<span class="hljs-keyword">@end</span>
+<span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">Person</span></span>
+<span class="hljs-keyword">@end</span>
+<span class="hljs-type">int</span> main(<span class="hljs-type">int</span> argc, <span class="hljs-keyword">const</span> <span class="hljs-type">char</span> * argv[]) &#123;
+    <span class="hljs-keyword">@autoreleasepool</span> &#123;
+        Person *p = [[Person alloc] init];
+        <span class="hljs-comment">/// 获得 obj 指针指向内存的大小</span>
+        <span class="hljs-comment">/// (__bridge const void *) (obj )</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;malloc size:%zd&quot;</span>, malloc_size((__bridge <span class="hljs-keyword">const</span> <span class="hljs-type">void</span> *)(p)));
+        <span class="hljs-comment">/// 获取 NSObject 累的实例对象的大小</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;use size:%zd&quot;</span>, class_getInstanceSize([Person <span class="hljs-keyword">class</span>]));
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre></div>
+<div class="code-wrapper"><pre><code class="hljs sh"><span class="hljs-comment">#终端打印</span>
+malloc size:32
+use size:32</code></pre></div>
+
+<h2 id="OC-代码转为-C-x2F-C-代码"><a href="#OC-代码转为-C-x2F-C-代码" class="headerlink" title="OC 代码转为 C&#x2F;C++ 代码"></a>OC 代码转为 C&#x2F;C++ 代码</h2><div class="code-wrapper"><pre><code class="hljs sh">clang -rewrite-objc main.m -o main.cpp</code></pre></div>
+<p>可以看到 Person 对象的结构体如下:</p>
+<div class="code-wrapper"><pre><code class="hljs cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Person_IMPL</span> &#123;
+	<span class="hljs-keyword">struct</span> <span class="hljs-title class_">NSObject_IMPL</span> NSObject_IVARS;
+	<span class="hljs-type">double</span> no;
+	<span class="hljs-type">int</span> _age;
+	<span class="hljs-type">int</span> _a;
+	<span class="hljs-type">int</span> _b;
+	<span class="hljs-type">int</span> _c;
+&#125;;</code></pre></div>
+
+<h2 id="最坏情况"><a href="#最坏情况" class="headerlink" title="最坏情况"></a>最坏情况</h2><ul>
+<li>最坏的情况就是长短类型交替声明</li>
+<li>如下：查看内存可见，本来只需要 4 字节的每个 Int 型都独享了 8 个字节</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-class"><span class="hljs-keyword">@interface</span> <span class="hljs-title">Person</span> : <span class="hljs-title">NSObject</span> </span>&#123;
+    <span class="hljs-keyword">@public</span>
+    <span class="hljs-type">int</span> _age;
+    <span class="hljs-type">double</span> no;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a1;
+    <span class="hljs-type">double</span> no1;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a2;
+    <span class="hljs-type">double</span> no2;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a3;
+    <span class="hljs-type">double</span> no3;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a4;
+    <span class="hljs-type">double</span> no4;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a5;
+    <span class="hljs-type">double</span> no5;  <span class="hljs-comment">/// &lt;- 长类型夹中间</span>
+    <span class="hljs-type">int</span> _a6;
+&#125;
+<span class="hljs-keyword">@end</span>
+<span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">Person</span></span>
+<span class="hljs-keyword">@end</span>
+<span class="hljs-type">int</span> main(<span class="hljs-type">int</span> argc, <span class="hljs-keyword">const</span> <span class="hljs-type">char</span> * argv[]) &#123;
+    <span class="hljs-keyword">@autoreleasepool</span> &#123;
+        Person *p = [[Person alloc] init];
+        p-&gt;_age = <span class="hljs-number">1</span>; p-&gt;_a1 = <span class="hljs-number">1</span>; p-&gt;_a2 = <span class="hljs-number">1</span>; p-&gt;_a3 = <span class="hljs-number">1</span>; p-&gt;_a4 = <span class="hljs-number">1</span>; p-&gt;_a5 = <span class="hljs-number">1</span>; p-&gt;_a6 = <span class="hljs-number">1</span>;
+        p-&gt;no = <span class="hljs-number">2</span>; p-&gt;no1 = <span class="hljs-number">2</span>; p-&gt;no2 = <span class="hljs-number">2</span>; p-&gt;no3 = <span class="hljs-number">2</span>; p-&gt;no4 = <span class="hljs-number">2</span>; p-&gt;no5 = <span class="hljs-number">2</span>;
+        <span class="hljs-comment">/// 获得 obj 指针指向内存的大小</span>
+        <span class="hljs-comment">/// (__bridge const void *) (obj )</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;malloc size:%zd&quot;</span>, malloc_size((__bridge <span class="hljs-keyword">const</span> <span class="hljs-type">void</span> *)(p)));
+        <span class="hljs-comment">/// 获取 NSObject 累的实例对象的大小</span>
+        <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;use size:%zd&quot;</span>, class_getInstanceSize([Person <span class="hljs-keyword">class</span>]));
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;</code></pre></div>
+<ul>
+<li>内存结构</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs sh">(lldb) x/15xg 0x600002904000
+0x600002904000: 0x011d8001000082d1 0x0000000000000001
+0x600002904010: 0x4000000000000000 0x0000000000000001
+0x600002904020: 0x4000000000000000 0x0000000000000001
+0x600002904030: 0x4000000000000000 0x0000000000000001
+0x600002904040: 0x4000000000000000 0x0000000000000001
+0x600002904050: 0x4000000000000000 0x0000000000000001
+0x600002904060: 0x4000000000000000 0x0000000000000001
+0x600002904070: 0x0000beaddc3d4070</code></pre></div>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/iOS/" class="category-chain-item">iOS</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/iOS/">#iOS</a>
+      
+        <a href="/tags/Objective-C/">#Objective-C</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Objective-C 容易被忽略的内存对齐</div>
+      <div>https://icoobin.github.io/2023/03/02/ios/Objective-C-容易被忽略的内存对齐/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/17/other/Github-%E9%9D%9E%E5%B8%B8%E5%A5%BD%E7%94%A8%E5%8A%9F%E8%83%BD/" title="Github 非常好用功能">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Github 非常好用功能</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/01/ios/Objective-C-weak-%E6%8C%87%E9%92%88%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" title="Objective-C weak 指针源码解析">
+                        <span class="hidden-mobile">Objective-C weak 指针源码解析</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

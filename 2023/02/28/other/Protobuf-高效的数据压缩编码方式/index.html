@@ -1,0 +1,1262 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="Protobuf 高效的数据压缩编码方式 原文地址  一. protocol buffers 是什么？Protocol buffers 是一种语言中立，平台无关，可扩展的序列化数据的格式，可用于通信协议，数据存储等。 Protocol buffers 在序列化数据方面，它是灵活的，高效的。相比于 XML 来说，Protocol buffers 更加小巧，更加快速，更加简单。一旦定义了要处理的数据的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Protobuf 高效的数据压缩编码方式">
+<meta property="og:url" content="https://icoobin.github.io/2023/02/28/other/Protobuf-%E9%AB%98%E6%95%88%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="Protobuf 高效的数据压缩编码方式 原文地址  一. protocol buffers 是什么？Protocol buffers 是一种语言中立，平台无关，可扩展的序列化数据的格式，可用于通信协议，数据存储等。 Protocol buffers 在序列化数据方面，它是灵活的，高效的。相比于 XML 来说，Protocol buffers 更加小巧，更加快速，更加简单。一旦定义了要处理的数据的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://icoobin.github.io/index_imgs/protobuf.png">
+<meta property="article:published_time" content="2023-02-28T03:55:44.000Z">
+<meta property="article:modified_time" content="2023-02-28T04:06:18.378Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="数据编码">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://icoobin.github.io/index_imgs/protobuf.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Protobuf 高效的数据压缩编码方式 - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Protobuf 高效的数据压缩编码方式"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-28 11:55" pubdate>
+          2023年2月28日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          20k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          164 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Protobuf 高效的数据压缩编码方式</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="Protobuf-高效的数据压缩编码方式"><a href="#Protobuf-高效的数据压缩编码方式" class="headerlink" title="Protobuf 高效的数据压缩编码方式"></a>Protobuf 高效的数据压缩编码方式</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://halfrost.com/protobuf_encode/">原文地址</a></li>
+</ul>
+<h2 id="一-protocol-buffers-是什么？"><a href="#一-protocol-buffers-是什么？" class="headerlink" title="一. protocol buffers 是什么？"></a>一. protocol buffers 是什么？</h2><p>Protocol buffers 是一种语言中立，平台无关，可扩展的序列化数据的格式，可用于通信协议，数据存储等。</p>
+<p>Protocol buffers 在序列化数据方面，它是灵活的，高效的。相比于 XML 来说，Protocol buffers 更加小巧，更加快速，更加简单。一旦定义了要处理的数据的数据结构之后，就可以利用 Protocol buffers 的代码生成工具生成相关的代码。甚至可以在无需重新部署程序的情况下更新数据结构。只需使用 Protobuf 对数据结构进行一次描述，即可利用各种不同语言或从各种不同数据流中对你的结构化数据轻松读写。</p>
+<p><strong>Protocol buffers 很适合做数据存储或 RPC 数据交换格式。可用于通讯协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式</strong>。</p>
+<h2 id="二-为什么要发明-protocol-buffers-？"><a href="#二-为什么要发明-protocol-buffers-？" class="headerlink" title="二. 为什么要发明 protocol buffers ？"></a>二. 为什么要发明 protocol buffers ？</h2><p>大家可能会觉得 Google 发明 protocol buffers 是为了解决序列化速度的，其实真实的原因并不是这样的。</p>
+<p>protocol buffers 最先开始是 google 用来解决索引服务器 request&#x2F;response 协议的。没有 protocol buffers 之前，google 已经存在了一种 request&#x2F;response 格式，用于手动处理 request&#x2F;response 的编组和反编组。它也能支持多版本协议，不过代码比较丑陋：</p>
+<p>C</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (version == <span class="hljs-number">3</span>) &#123;
+  ...
+&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (version &gt; <span class="hljs-number">4</span>) &#123;
+  <span class="hljs-keyword">if</span> (version == <span class="hljs-number">5</span>) &#123;
+    ...
+  &#125;
+  ...
+&#125;</code></pre></div>
+
+<p>如果非常明确的格式化协议，会使新协议变得非常复杂。因为开发人员必须确保请求发起者与处理请求的实际服务器之间的所有服务器都能理解新协议，然后才能切换开关以开始使用新协议。</p>
+<p>这也就是每个服务器开发人员都遇到过的低版本兼容、新旧协议兼容相关的问题。</p>
+<p>protocol buffers 为了解决这些问题，于是就诞生了。protocol buffers 被寄予一下 2 个特点：</p>
+<ul>
+<li>可以很容易地引入新的字段，并且不需要检查数据的中间服务器可以简单地解析并传递数据，而无需了解所有字段。</li>
+<li>数据格式更加具有自我描述性，可以用各种语言来处理(C++, Java 等各种语言)</li>
+</ul>
+<p>这个版本的 protocol buffers 仍需要自己手写解析的代码。</p>
+<p>不过随着系统慢慢发展，演进，protocol buffers 目前具有了更多的特性：</p>
+<ul>
+<li>自动生成的序列化和反序列化代码避免了手动解析的需要。（官方提供自动生成代码工具，各个语言平台的基本都有）</li>
+<li>除了用于 RPC（远程过程调用）请求之外，人们开始将 protocol buffers 用作持久存储数据的便捷自描述格式（例如，在Bigtable中）。</li>
+<li>服务器的 RPC 接口可以先声明为协议的一部分，然后用 protocol compiler 生成基类，用户可以使用服务器接口的实际实现来覆盖它们。</li>
+</ul>
+<p>protocol buffers 现在是 Google 用于数据的通用语言。在撰写本文时，谷歌代码树中定义了 48162 种不同的消息类型，包括 12183 个 .proto 文件。它们既用于 RPC 系统，也用于在各种存储系统中持久存储数据。</p>
+<p>小结：</p>
+<p><strong>protocol buffers 诞生之初是为了解决服务器端新旧协议(高低版本)兼容性问题，名字也很体贴，“协议缓冲区”。只不过后期慢慢发展成用于传输数据</strong>。</p>
+<blockquote>
+<p>Protocol Buffers 命名由来：</p>
+<p>Why the name “Protocol Buffers”? The name originates from the early days of the format, before we had the protocol buffer compiler to generate classes for us. At the time, there was a class called ProtocolBuffer which actually acted as a buffer for an individual method. Users would add tag&#x2F;value pairs to this buffer individually by calling methods like AddValue(tag, value). The raw bytes were stored in a buffer which could then be written out once the message had been constructed.</p>
+<p>Since that time, the “buffers” part of the name has lost its meaning, but it is still the name we use. Today, people usually use the term “protocol message” to refer to a message in an abstract sense, “protocol buffer” to refer to a serialized copy of a message, and “protocol message object” to refer to an in-memory object representing the parsed message.</p>
+<p>这个名字起源于 format 早期，在我们有 protocol buffer 编译器为我们生成类之前。当时，有一个名为 ProtocolBuffer 的类，它实际上充当了单个方法的缓冲区。用户可以通过调用像 AddValue(tag,value) 这样的方法分别将标签&#x2F;值对添加到此缓冲区。原始字节存储在一个缓冲区中，一旦构建消息就可以将其写出。</p>
+<p>从那时起，名为“缓冲”的部分已经失去了意义，但它仍然是我们使用的名称。今天，人们通常使用术语“protocol message”来指代抽象意义上的消息，“protocol buffer”指的是消息的序列化副本，而“protocol message object”指的是代表内存中对象解析的消息。</p>
+</blockquote>
+<h2 id="三-proto3-定义-message"><a href="#三-proto3-定义-message" class="headerlink" title="三. proto3 定义 message"></a>三. proto3 定义 message</h2><p>目前 protocol buffers 最新版本是 proto3，与老的版本 proto2 还是有些区别的。这两个版本的 API 不完全兼容。</p>
+<blockquote>
+<p>proto2 和 proto3 的名字看起来有点扑朔迷离，那是因为当我们最初开源的 protocol buffers 时，它实际上是 Google 的第二个版本了，所以被称为 proto2，这也是我们的开源版本号从 v2 开始的原因。初始版名为 proto1，从 2001 年初开始在谷歌开发的。</p>
+</blockquote>
+<p>在 proto 中，所有结构化的数据都被称为 message。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">helloworld</span>
+&#123;
+   <span class="hljs-keyword">required</span> <span class="hljs-type">int32</span>     id = <span class="hljs-number">1</span>;  <span class="hljs-comment">// ID</span>
+   <span class="hljs-keyword">required</span> <span class="hljs-type">string</span>    str = <span class="hljs-number">2</span>;  <span class="hljs-comment">// str</span>
+   <span class="hljs-keyword">optional</span> <span class="hljs-type">int32</span>     opt = <span class="hljs-number">3</span>;  <span class="hljs-comment">//optional field</span>
+&#125;</code></pre></div>
+
+<p>上面这几行语句，定义了一个消息 helloworld，该消息有三个成员，类型为 int32 的 id，另一个为类型为 string 的成员 str。opt 是一个可选的成员，即消息中可以不包含该成员。</p>
+<p>接下来说明一些 proto3 中需要注意的地方。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf">syntax = <span class="hljs-string">&quot;proto3&quot;</span>;
+
+<span class="hljs-keyword">message </span><span class="hljs-title class_">SearchRequest</span> &#123;
+  <span class="hljs-type">string</span> query = <span class="hljs-number">1</span>;
+  <span class="hljs-type">int32</span> page_number = <span class="hljs-number">2</span>;
+  <span class="hljs-type">int32</span> result_per_page = <span class="hljs-number">3</span>;
+&#125;</code></pre></div>
+
+<p>如果开头第一行不声明 <code>syntax = &quot;proto3&quot;;</code>，则默认使用 proto2 进行解析。</p>
+<h3 id="1-分配字段编号"><a href="#1-分配字段编号" class="headerlink" title="1. 分配字段编号"></a>1. 分配字段编号</h3><p>每个消息定义中的每个字段都有<strong>唯一的编号</strong>。这些字段编号用于标识消息二进制格式中的字段，并且在使用消息类型后不应更改。请注意，范围 1 到 15 中的字段编号需要一个字节进行编码，包括字段编号和字段类型（具体原因见 <a target="_blank" rel="noopener" href="https://github.com/halfrost/Halfrost-Field/blob/master/contents/Protocol/Protocol-buffers-encode.md#%E5%85%AD-protocol-buffer-%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86">Protocol Buffer 编码原理</a> 这一章节）。范围 16 至 2047 中的字段编号需要两个字节。所以你应该保留数字 1 到 15 作为非常频繁出现的消息元素。请记住为将来可能添加的频繁出现的元素留出一些空间。</p>
+<p>可以指定的最小字段编号为1，最大字段编号为2^29^-1 或 536,870,911。也不能使用数字 19000 到 19999（FieldDescriptor :: kFirstReservedNumber 到 FieldDescriptor :: kLastReservedNumber），因为它们是为 Protocol Buffers实现保留的。</p>
+<p>如果在 .proto 中使用这些保留数字中的一个，Protocol Buffers 编译的时候会报错。</p>
+<p>同样，您不能使用任何以前 Protocol Buffers 保留的一些字段号码。保留字段是什么，下一节详细说明。</p>
+<h3 id="2-保留字段"><a href="#2-保留字段" class="headerlink" title="2. 保留字段"></a>2. 保留字段</h3><p>如果您通过完全删除某个字段或将其注释掉来更新消息类型，那么未来的用户可以在对该类型进行自己的更新时重新使用该字段号。如果稍后加载到了的旧版本 <code>.proto</code> 文件，则会导致服务器出现严重问题，例如数据混乱，隐私错误等等。确保这种情况不会发生的一种方法是指定删除字段的字段编号（或名称，这也可能会导致 JSON 序列化问题）为 <code>reserved</code>。如果将来的任何用户试图使用这些字段标识符，Protocol Buffers 编译器将会报错。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Foo</span> &#123;
+  reserved <span class="hljs-number">2</span>, <span class="hljs-number">15</span>, <span class="hljs-number">9</span> to <span class="hljs-number">11</span>;
+  reserved <span class="hljs-string">&quot;foo&quot;</span>, <span class="hljs-string">&quot;bar&quot;</span>;
+&#125;</code></pre></div>
+
+<p><strong>注意，不能在同一个 <code>reserved</code> 语句中混合字段名称和字段编号</strong>。如有需要需要像上面这个例子这样写。</p>
+<h3 id="3-默认字段规则"><a href="#3-默认字段规则" class="headerlink" title="3. 默认字段规则"></a>3. 默认字段规则</h3><ul>
+<li>字段名不能重复，必须唯一。</li>
+<li>repeated 字段：可以在一个 message 中重复任何数字多次(包括 0 )，不过这些重复值的顺序被保留。</li>
+</ul>
+<p>在 proto3 中，纯数字类型的 repeated 字段编码时候默认采用 packed 编码（具体原因见 <a target="_blank" rel="noopener" href="https://github.com/halfrost/Halfrost-Field/blob/master/contents/Protocol/Protocol-buffers-encode.md#%E5%85%AD-protocol-buffer-%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86">Protocol Buffer 编码原理</a> 这一章节）</p>
+<h3 id="4-各个语言标量类型对应关系"><a href="#4-各个语言标量类型对应关系" class="headerlink" title="4. 各个语言标量类型对应关系"></a>4. 各个语言标量类型对应关系</h3><p>标注：</p>
+<ul>
+<li>[1] 在 Java 中，无符号的 32 位和 64 位整数使用对应带符号的表示方法，最高位存储符号位。</li>
+<li>[2] 在所有情况下，给一个字段设置一个值的时候都会执行类型检查以确保其有效。</li>
+<li>[3] 64 位或无符号 32 位整数在解码时始终表示为 long，但是如果在设置字段的时候设置了 int，则可以为 int。 在所有情况下，该值都必须符合设置时表示的类型。参见[2]。</li>
+<li>[4] Python 字符串在解码时表示为 unicode，但如果给出了 ASCII 字符串，则可以为 str（此字符串可能会发生变化）。</li>
+<li>[5] 在 64 位计算机上使用 Integer，在 32 位计算机上使用 string。</li>
+</ul>
+<h3 id="5-枚举"><a href="#5-枚举" class="headerlink" title="5. 枚举"></a>5. 枚举</h3><p>在 message 中可以嵌入枚举类型。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">SearchRequest</span> &#123;
+  <span class="hljs-type">string</span> query = <span class="hljs-number">1</span>;
+  <span class="hljs-type">int32</span> page_number = <span class="hljs-number">2</span>;
+  <span class="hljs-type">int32</span> result_per_page = <span class="hljs-number">3</span>;
+  <span class="hljs-keyword">enum </span><span class="hljs-title class_">Corpus</span> &#123;
+    UNIVERSAL = <span class="hljs-number">0</span>;
+    WEB = <span class="hljs-number">1</span>;
+    IMAGES = <span class="hljs-number">2</span>;
+    LOCAL = <span class="hljs-number">3</span>;
+    NEWS = <span class="hljs-number">4</span>;
+    PRODUCTS = <span class="hljs-number">5</span>;
+    VIDEO = <span class="hljs-number">6</span>;
+  &#125;
+  Corpus corpus = <span class="hljs-number">4</span>;
+&#125;</code></pre></div>
+
+<p>枚举类型需要注意的是，一定要有 0 值。</p>
+<ul>
+<li>枚举为 0 的是作为零值，当不赋值的时候，就会是零值。</li>
+<li>为了和 proto2 兼容。在 proto2 中，零值必须是第一个值。</li>
+</ul>
+<p>另外在反序列化的过程中，无法被识别的枚举值，将会被保留在 messaage 中。因为消息反序列化时如何表示是依赖于语言的。在支持指定符号范围之外的值的开放枚举类型的语言中，例如 C++ 和 Go，未知的枚举值只是存储为其基础整数表示。在诸如 Java 之类的封闭枚举类型的语言中，枚举值会被用来标识未识别的值，并且特殊的访问器可以访问到底层整数。</p>
+<p>在其他情况下，如果消息被序列化，则无法识别的值仍将与消息一起序列化。</p>
+<h3 id="5-枚举中的保留值"><a href="#5-枚举中的保留值" class="headerlink" title="5. 枚举中的保留值"></a>5. 枚举中的保留值</h3><p>如果您通过完全删除枚举条目或将其注释掉来更新枚举类型，未来的用户可以在对该类型进行自己的更新时重新使用数值。如果稍后加载到了的旧版本 <code>.proto</code> 文件，则会导致服务器出现严重问题，例如数据混乱，隐私错误等等。确保这种情况不会发生的一种方法是指定已删除条目的数字值（或名称，这也可能会导致JSON序列化问题）为 <code>reserved</code>。如果将来的任何用户试图使用这些字段标识符，Protocol Buffers 编译器将会报错。您可以使用 <code>max</code> 关键字指定您的保留数值范围上升到最大可能值。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">enum </span><span class="hljs-title class_">Foo</span> &#123;
+  reserved <span class="hljs-number">2</span>, <span class="hljs-number">15</span>, <span class="hljs-number">9</span> to <span class="hljs-number">11</span>, <span class="hljs-number">40</span> to max;
+  reserved <span class="hljs-string">&quot;FOO&quot;</span>, <span class="hljs-string">&quot;BAR&quot;</span>;
+&#125;</code></pre></div>
+
+<p><strong>注意，不能在同一个 <code>reserved</code> 语句中混合字段名称和字段编号</strong>。如有需要需要像上面这个例子这样写。</p>
+<h3 id="6-允许嵌套"><a href="#6-允许嵌套" class="headerlink" title="6. 允许嵌套"></a>6. 允许嵌套</h3><p>Protocol Buffers 定义 message 允许嵌套组合成更加复杂的消息。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">SearchResponse</span> &#123;
+  <span class="hljs-keyword">repeated</span> Result results = <span class="hljs-number">1</span>;
+&#125;
+
+<span class="hljs-keyword">message </span><span class="hljs-title class_">Result</span> &#123;
+  <span class="hljs-type">string</span> url = <span class="hljs-number">1</span>;
+  <span class="hljs-type">string</span> title = <span class="hljs-number">2</span>;
+  <span class="hljs-keyword">repeated</span> <span class="hljs-type">string</span> snippets = <span class="hljs-number">3</span>;
+&#125;</code></pre></div>
+
+<p>上面的例子中，SearchResponse 中嵌套使用了 Result 。</p>
+<p>更多的例子：</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">SearchResponse</span> &#123;
+  <span class="hljs-keyword">message </span><span class="hljs-title class_">Result</span> &#123;
+    <span class="hljs-type">string</span> url = <span class="hljs-number">1</span>;
+    <span class="hljs-type">string</span> title = <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">repeated</span> <span class="hljs-type">string</span> snippets = <span class="hljs-number">3</span>;
+  &#125;
+  <span class="hljs-keyword">repeated</span> Result results = <span class="hljs-number">1</span>;
+&#125;
+
+<span class="hljs-keyword">message </span><span class="hljs-title class_">SomeOtherMessage</span> &#123;
+  SearchResponse.Result result = <span class="hljs-number">1</span>;
+&#125;</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Outer</span> &#123;                  <span class="hljs-comment">// Level 0</span>
+  <span class="hljs-keyword">message </span><span class="hljs-title class_">MiddleAA</span> &#123;  <span class="hljs-comment">// Level 1</span>
+    <span class="hljs-keyword">message </span><span class="hljs-title class_">Inner</span> &#123;   <span class="hljs-comment">// Level 2</span>
+      <span class="hljs-type">int64</span> ival = <span class="hljs-number">1</span>;
+      <span class="hljs-type">bool</span>  booly = <span class="hljs-number">2</span>;
+    &#125;
+  &#125;
+  <span class="hljs-keyword">message </span><span class="hljs-title class_">MiddleBB</span> &#123;  <span class="hljs-comment">// Level 1</span>
+    <span class="hljs-keyword">message </span><span class="hljs-title class_">Inner</span> &#123;   <span class="hljs-comment">// Level 2</span>
+      <span class="hljs-type">int32</span> ival = <span class="hljs-number">1</span>;
+      <span class="hljs-type">bool</span>  booly = <span class="hljs-number">2</span>;
+    &#125;
+  &#125;
+&#125;</code></pre></div>
+
+<h3 id="7-枚举不兼容性"><a href="#7-枚举不兼容性" class="headerlink" title="7. 枚举不兼容性"></a>7. 枚举不兼容性</h3><p>可以导入 proto2 消息类型并在 proto3 消息中使用它们，反之亦然。然而，proto2 枚举不能直接用在 proto3 语法中（但是如果导入的proto2消息使用它们，这是可以的）。</p>
+<h3 id="8-更新-message"><a href="#8-更新-message" class="headerlink" title="8. 更新 message"></a>8. 更新 message</h3><p>如果后面发现之前定义 message 需要增加字段了，这个时候就体现出 Protocol Buffer 的优势了，不需要改动之前的代码。不过需要满足以下 10 条规则：</p>
+<ol>
+<li>不要改动原有字段的数据结构。</li>
+<li>如果您添加新字段，则任何由代码使用“旧”消息格式序列化的消息仍然可以通过新生成的代码进行分析。您应该记住这些元素的默认值，以便新代码可以正确地与旧代码生成的消息进行交互。同样，由新代码创建的消息可以由旧代码解析：旧的二进制文件在解析时会简单地忽略新字段。（具体原因见 <a target="_blank" rel="noopener" href="https://github.com/halfrost/Halfrost-Field/blob/master/contents/Protocol/Protocol-buffers-encode.md#9-%E6%9C%AA%E7%9F%A5%E5%AD%97%E6%AE%B5">未知字段</a> 这一章节）</li>
+<li>只要字段号在更新的消息类型中不再使用，字段可以被删除。您可能需要重命名该字段，可能会添加前缀“OBSOLETE_”，或者标记成保留字段号 <code>reserved</code>，以便将来的 <code>.proto</code> 用户不会意外重复使用该号码。</li>
+<li>int32，uint32，int64，uint64 和 bool 全都兼容。这意味着您可以将字段从这些类型之一更改为另一个字段而不破坏向前或向后兼容性。如果一个数字从不适合相应类型的线路中解析出来，则会得到与在 C++ 中将该数字转换为该类型相同的效果（例如，如果将 64 位数字读为 int32，它将被截断为 32 位）。</li>
+<li>sint32 和 sint64 相互兼容，但与其他整数类型不兼容。</li>
+<li>只要字节是有效的UTF-8，string 和 bytes 是兼容的。</li>
+<li>嵌入式 message 与 bytes 兼容，如果 bytes 包含 message 的 encoded version。</li>
+<li>fixed32与sfixed32兼容，而fixed64与sfixed64兼容。</li>
+<li>enum 就数组而言，是可以与 int32，uint32，int64 和 uint64 兼容（请注意，如果它们不适合，值将被截断）。但是请注意，当消息反序列化时，客户端代码可能会以不同的方式对待它们：例如，未识别的 proto3 枚举类型将保留在消息中，但消息反序列化时如何表示是与语言相关的。（这点和语言相关，上面提到过了）Int 域始终只保留它们的值。</li>
+<li>将单个<strong>值</strong>更改为新的成员是安全和二进制兼容的。如果您确定一次没有代码设置多个<strong>字段</strong>，则将多个字段移至新的字段可能是安全的。将任何<strong>字段</strong>移到现有字段中都是不安全的。（注意字段和值的区别，字段是 field，值是 value）</li>
+</ol>
+<h3 id="9-未知字段"><a href="#9-未知字段" class="headerlink" title="9. 未知字段"></a>9. 未知字段</h3><p>未知数字段是 protocol buffers 序列化的数据，表示解析器无法识别的字段。例如，当一个旧的二进制文件解析由新的二进制文件发送的新数据的数据时，这些新的字段将成为旧的二进制文件中的未知字段。</p>
+<p>Proto3 实现可以成功解析未知字段的消息，但是，实现可能会或可能不会支持保留这些未知字段。你不应该依赖保存或删除未知域。对于大多数 Google protocol buffers 实现，未知字段在 proto3 中无法通过相应的 proto 运行时访问，并且在反序列化时被丢弃和遗忘。这是与 proto2 的不同行为，其中未知字段总是与消息一起保存并序列化。</p>
+<h3 id="10-Map-类型"><a href="#10-Map-类型" class="headerlink" title="10. Map 类型"></a>10. Map 类型</h3><p>repeated 类型可以用来表示数组，Map 类型则可以用来表示字典。</p>
+<div class="code-wrapper"><pre><code class="hljs thrift"><span class="hljs-type">map</span>&lt;key_type, value_type&gt; map_field = N;
+
+<span class="hljs-type">map</span>&lt;<span class="hljs-type">string</span>, Project&gt; projects = <span class="hljs-number">3</span>;
+</code></pre></div>
+
+<p><code>key_type</code> 可以是任何 int 或者 string 类型(任何的标量类型，具体可以见上面标量类型对应表格，但是要除去 float、double 和 bytes)</p>
+<p><strong>枚举值也不能作为 key</strong>。</p>
+<p><code>key_type</code> 可以是除去 map 以外的任何类型。</p>
+<p>需要特别注意的是 ：</p>
+<ul>
+<li>map 是不能用 repeated 修饰的。</li>
+<li>线性数组和 map 迭代顺序的是不确定的，所以你不能依靠你的 map 是在一个特定的顺序。</li>
+<li>为 <code>.proto</code> 生成文本格式时，map 按 key 排序。数字的 key 按数字排序。</li>
+<li>从数组中解析或合并时，如果有重复的 key，则使用所看到的最后一个 key（覆盖原则）。从文本格式解析映射时，如果有重复的 key，解析可能会失败。</li>
+</ul>
+<p>Protocol Buffer 虽然不支持 map 类型的数组，但是可以转换一下，用以下思路实现 maps 数组：</p>
+<div class="code-wrapper"><pre><code class="hljs abnf">message MapFieldEntry &#123;
+  key_type key <span class="hljs-operator">=</span> <span class="hljs-number">1</span><span class="hljs-comment">;</span>
+  value_type value <span class="hljs-operator">=</span> <span class="hljs-number">2</span><span class="hljs-comment">;</span>
+&#125;
+
+repeated MapFieldEntry map_field <span class="hljs-operator">=</span> N<span class="hljs-comment">;</span>
+</code></pre></div>
+
+<p>上述写法和 map 数组是完全等价的，所以用 repeated 巧妙的实现了 maps 数组的需求。</p>
+<h3 id="11-JSON-Mapping"><a href="#11-JSON-Mapping" class="headerlink" title="11. JSON Mapping"></a>11. JSON Mapping</h3><p>Proto3 支持 JSON 中的规范编码，使系统之间共享数据变得更加容易。编码在下表中按类型逐个描述。</p>
+<p>如果 JSON 编码数据中缺少值或其值为空，则在解析为 protocol buffer 时，它将被解释为适当的默认值。如果一个字段在协议缓冲区中具有默认值，默认情况下它将在 JSON 编码数据中省略以节省空间。具体 Mapping 的实现可以提供选项决定是否在 JSON 编码的输出中发送具有默认值的字段。</p>
+<p>proto3 的 JSON 实现中提供了以下 4 中 options:</p>
+<ul>
+<li>使用默认值发送字段：在默认情况下，默认值的字段在 proto3 JSON 输出中被忽略。一个实现可以提供一个选项来覆盖这个行为，并使用它们的默认值输出字段。</li>
+<li>忽略未知字段：默认情况下，Proto3 JSON 解析器应拒绝未知字段，但可能提供一个选项来忽略解析中的未知字段。</li>
+<li>使用 proto 字段名称而不是 lowerCamelCase 名称：默认情况下，proto3 JSON 的 printer 将字段名称转换为 lowerCamelCase 并将其用作 JSON 名称。实现可能会提供一个选项，将原始字段名称用作 JSON 名称。 Proto3 JSON 解析器需要接受转换后的 lowerCamelCase 名称和原始字段名称。</li>
+<li>发送枚举形式的枚举值而不是字符串：在 JSON 输出中默认使用枚举值的名称。可以提供一个选项来使用枚举值的数值。</li>
+</ul>
+<h2 id="四-proto3-定义-Services"><a href="#四-proto3-定义-Services" class="headerlink" title="四. proto3 定义 Services"></a>四. proto3 定义 Services</h2><p>如果要使用 RPC（远程过程调用）系统的消息类型，可以在 <code>.proto</code> 文件中定义 RPC 服务接口，protocol buffer 编译器将使用所选语言生成服务接口代码和 stubs。所以，例如，如果你定义一个 RPC 服务，入参是 SearchRequest 返回值是 SearchResponse，你可以在你的 <code>.proto</code> 文件中定义它，如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">service </span><span class="hljs-title class_">SearchService</span> &#123;
+  <span class="hljs-function"><span class="hljs-keyword">rpc</span> Search (SearchRequest) <span class="hljs-keyword">returns</span> (SearchResponse)</span>;
+&#125;
+</code></pre></div>
+
+<p>与 protocol buffer 一起使用的最直接的 RPC 系统是 gRPC：在谷歌开发的语言和平台中立的开源 RPC 系统。gRPC 在 protocol buffer 中工作得非常好，并且允许你通过使用特殊的 protocol buffer 编译插件，直接从 <code>.proto</code> 文件中生成 RPC 相关的代码。</p>
+<p>如果你不想使用 gRPC，也可以在你自己的 RPC 实现中使用 protocol buffers。您可以在 Proto2 语言指南中找到更多关于这些相关的信息。</p>
+<p>还有一些正在进行的第三方项目为 Protocol Buffers 开发 RPC 实现。</p>
+<h2 id="五-Protocol-Buffer-命名规范"><a href="#五-Protocol-Buffer-命名规范" class="headerlink" title="五. Protocol Buffer 命名规范"></a>五. Protocol Buffer 命名规范</h2><p>message 采用驼峰命名法。message 首字母大写开头。字段名采用下划线分隔法命名。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">SongServerRequest</span> &#123;
+  <span class="hljs-keyword">required</span> <span class="hljs-type">string</span> song_name = <span class="hljs-number">1</span>;
+&#125;
+</code></pre></div>
+
+<p>枚举类型采用驼峰命名法。枚举类型首字母大写开头。每个枚举值全部大写，并且采用下划线分隔法命名。</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-class"><span class="hljs-keyword">enum</span> <span class="hljs-title">Foo</span> &#123;</span>
+  FIRST_VALUE = <span class="hljs-number">0</span>;
+  SECOND_VALUE = <span class="hljs-number">1</span>;
+&#125;
+</code></pre></div>
+
+<p><strong>每个枚举值用分号结束，不是逗号</strong>。</p>
+<p>服务名和方法名都采用驼峰命名法。并且首字母都大写开头。</p>
+<div class="code-wrapper"><pre><code class="hljs c">service FooService &#123;
+  rpc <span class="hljs-title function_">GetSomething</span><span class="hljs-params">(FooRequest)</span> <span class="hljs-title function_">returns</span> <span class="hljs-params">(FooResponse)</span>;
+&#125;</code></pre></div>
+
+<h2 id="六-Protocol-Buffer-编码原理"><a href="#六-Protocol-Buffer-编码原理" class="headerlink" title="六. Protocol Buffer 编码原理"></a>六. Protocol Buffer 编码原理</h2><p>在讨论 Protocol Buffer 编码原理之前，必须先谈谈 Varints 编码。</p>
+<h3 id="Base-128-Varints-编码"><a href="#Base-128-Varints-编码" class="headerlink" title="Base 128 Varints 编码"></a>Base 128 Varints 编码</h3><p>Varint 是一种紧凑的表示数字的方法。它用一个或多个字节来表示一个数字，值越小的数字使用越少的字节数。这能减少用来表示数字的字节数。</p>
+<p>Varint 中的每个字节（最后一个字节除外）都设置了最高有效位（msb），这一位表示还会有更多字节出现。每个字节的低 7 位用于以 7 位组的形式存储数字的二进制补码表示，最低有效组首位。</p>
+<p>如果用不到 1 个字节，那么最高有效位设为 0 ，如下面这个例子，1 用一个字节就可以表示，所以 msb 为 0.</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">0000</span> <span class="hljs-number">0001</span></code></pre></div>
+
+<p>如果需要多个字节表示，msb 就应该设置为 1 。例如 300，如果用 Varint 表示的话：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">1010</span> <span class="hljs-number">1100</span> <span class="hljs-number">0000</span> <span class="hljs-number">0010</span></code></pre></div>
+
+<p>如果按照正常的二进制计算的话，这个表示的是 88068(65536 + 16384 + 4096 + 2048 + 4)。</p>
+<p>那 Varint 是怎么编码的呢？</p>
+<p>下面代码是 Varint int 32 的编码计算方法。</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-type">char</span>* <span class="hljs-title function_">EncodeVarint32</span><span class="hljs-params">(<span class="hljs-type">char</span>* dst, <span class="hljs-type">uint32_t</span> v)</span> &#123;
+  <span class="hljs-comment">// Operate on characters as unsigneds</span>
+  <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* ptr = reinterpret_cast&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>*&gt;(dst);
+  <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> B = <span class="hljs-number">128</span>;
+  <span class="hljs-keyword">if</span> (v &lt; (<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">7</span>)) &#123;
+    *(ptr++) = v;
+  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (v &lt; (<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">14</span>)) &#123;
+    *(ptr++) = v | B;
+    *(ptr++) = v&gt;&gt;<span class="hljs-number">7</span>;
+  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (v &lt; (<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">21</span>)) &#123;
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">7</span>) | B;
+    *(ptr++) = v&gt;&gt;<span class="hljs-number">14</span>;
+  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (v &lt; (<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">28</span>)) &#123;
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">7</span>) | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">14</span>) | B;
+    *(ptr++) = v&gt;&gt;<span class="hljs-number">21</span>;
+  &#125; <span class="hljs-keyword">else</span> &#123;
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">7</span>) | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">14</span>) | B;
+    *(ptr++) = (v&gt;&gt;<span class="hljs-number">21</span>) | B;
+    *(ptr++) = v&gt;&gt;<span class="hljs-number">28</span>;
+  &#125;
+  <span class="hljs-keyword">return</span> reinterpret_cast&lt;<span class="hljs-type">char</span>*&gt;(ptr);
+&#125;</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">300</span> = <span class="hljs-number">100101100</span></code></pre></div>
+
+<p>由于 300 超过了 7 位（Varint 一个字节只有 7 位能用来表示数字，最高位 msb 用来表示后面是否有更多字节），所以 300 需要用 2 个字节来表示。</p>
+<p>Varint 的编码，以 300 举例：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">if</span> (v &lt; (<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">14</span>)) &#123;
+    *(ptr++) = v | B;
+    *(ptr++) = v&gt;&gt;<span class="hljs-number">7</span>;
+&#125;
+
+<span class="hljs-number">1.</span> <span class="hljs-number">100101100</span> | <span class="hljs-number">10000000</span> = <span class="hljs-number">1</span> <span class="hljs-number">1010</span> <span class="hljs-number">1100</span>
+<span class="hljs-number">2.</span> <span class="hljs-number">110101100</span> 取出末尾 <span class="hljs-number">7</span> 位 = <span class="hljs-number">010</span> <span class="hljs-number">1100</span>
+<span class="hljs-number">3.</span> <span class="hljs-number">100101100</span> &gt;&gt; <span class="hljs-number">7</span> = <span class="hljs-number">10</span> = <span class="hljs-number">0000</span> <span class="hljs-number">0010</span>
+<span class="hljs-number">4.</span> <span class="hljs-number">1010</span> <span class="hljs-number">1100</span> <span class="hljs-number">0000</span> <span class="hljs-number">0010</span> (最终 Varint 结果)</code></pre></div>
+
+<p>Varint 的解码算法应该是这样的：（实际就是编码的逆过程）</p>
+<ol>
+<li>如果是多个字节，先去掉每个字节的 msb（通过逻辑或运算），每个字节只留下 7 位。</li>
+<li>逆序整个结果，最多是 5 个字节，排序是 1-2-3-4-5，逆序之后就是 5-4-3-2-1，字节内部的二进制位的顺序不变，变的是字节的相对位置。</li>
+</ol>
+<p>解码过程调用 GetVarint32Ptr 函数，如果是大于一个字节的情况，会调用 GetVarint32PtrFallback 来处理。</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-keyword">inline</span> <span class="hljs-type">const</span> <span class="hljs-type">char</span>* <span class="hljs-title function_">GetVarint32Ptr</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* p,</span>
+<span class="hljs-params">                                  <span class="hljs-type">const</span> <span class="hljs-type">char</span>* limit,</span>
+<span class="hljs-params">                                  <span class="hljs-type">uint32_t</span>* value)</span> &#123;
+  <span class="hljs-keyword">if</span> (p &lt; limit) &#123;
+    <span class="hljs-type">uint32_t</span> result = *(reinterpret_cast&lt;<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>*&gt;(p));
+    <span class="hljs-keyword">if</span> ((result &amp; <span class="hljs-number">128</span>) == <span class="hljs-number">0</span>) &#123;
+      *value = result;
+      <span class="hljs-keyword">return</span> p + <span class="hljs-number">1</span>;
+    &#125;
+  &#125;
+  <span class="hljs-keyword">return</span> GetVarint32PtrFallback(p, limit, value);
+&#125;
+
+<span class="hljs-type">const</span> <span class="hljs-type">char</span>* <span class="hljs-title function_">GetVarint32PtrFallback</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* p,</span>
+<span class="hljs-params">                                   <span class="hljs-type">const</span> <span class="hljs-type">char</span>* limit,</span>
+<span class="hljs-params">                                   <span class="hljs-type">uint32_t</span>* value)</span> &#123;
+  <span class="hljs-type">uint32_t</span> result = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-type">uint32_t</span> shift = <span class="hljs-number">0</span>; shift &lt;= <span class="hljs-number">28</span> &amp;&amp; p &lt; limit; shift += <span class="hljs-number">7</span>) &#123;
+    <span class="hljs-type">uint32_t</span> byte = *(reinterpret_cast&lt;<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>*&gt;(p));
+    p++;
+    <span class="hljs-keyword">if</span> (byte &amp; <span class="hljs-number">128</span>) &#123;
+      <span class="hljs-comment">// More bytes are present</span>
+      result |= ((byte &amp; <span class="hljs-number">127</span>) &lt;&lt; shift);
+    &#125; <span class="hljs-keyword">else</span> &#123;
+      result |= (byte &lt;&lt; shift);
+      *value = result;
+      <span class="hljs-keyword">return</span> reinterpret_cast&lt;<span class="hljs-type">const</span> <span class="hljs-type">char</span>*&gt;(p);
+    &#125;
+  &#125;
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+&#125;
+</code></pre></div>
+
+<p>至此，Varint 处理过程读者应该都熟悉了。上面列举出了 Varint 32 的算法，64 位的同理，只不过不再用 10 个分支来写代码了，太丑了。（32位 是 5 个 字节，64位 是 10 个字节）</p>
+<p>64 位 Varint 编码实现：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-type">char</span>* <span class="hljs-title function_">EncodeVarint64</span><span class="hljs-params">(<span class="hljs-type">char</span>* dst, <span class="hljs-type">uint64_t</span> v)</span> &#123;
+  <span class="hljs-type">static</span> <span class="hljs-type">const</span> <span class="hljs-type">int</span> B = <span class="hljs-number">128</span>;
+  <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>* ptr = reinterpret_cast&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>*&gt;(dst);
+  <span class="hljs-keyword">while</span> (v &gt;= B) &#123;
+    *(ptr++) = (v &amp; (B<span class="hljs-number">-1</span>)) | B;
+    v &gt;&gt;= <span class="hljs-number">7</span>;
+  &#125;
+  *(ptr++) = static_cast&lt;<span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>&gt;(v);
+  <span class="hljs-keyword">return</span> reinterpret_cast&lt;<span class="hljs-type">char</span>*&gt;(ptr);
+&#125;</code></pre></div>
+
+<p>原理不变，只不过用循环来解决了。</p>
+<p>64 位 Varint 解码实现：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-type">const</span> <span class="hljs-type">char</span>* <span class="hljs-title function_">GetVarint64Ptr</span><span class="hljs-params">(<span class="hljs-type">const</span> <span class="hljs-type">char</span>* p, <span class="hljs-type">const</span> <span class="hljs-type">char</span>* limit, <span class="hljs-type">uint64_t</span>* value)</span> &#123;
+  <span class="hljs-type">uint64_t</span> result = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">for</span> (<span class="hljs-type">uint32_t</span> shift = <span class="hljs-number">0</span>; shift &lt;= <span class="hljs-number">63</span> &amp;&amp; p &lt; limit; shift += <span class="hljs-number">7</span>) &#123;
+    <span class="hljs-type">uint64_t</span> byte = *(reinterpret_cast&lt;<span class="hljs-type">const</span> <span class="hljs-type">unsigned</span> <span class="hljs-type">char</span>*&gt;(p));
+    p++;
+    <span class="hljs-keyword">if</span> (byte &amp; <span class="hljs-number">128</span>) &#123;
+      <span class="hljs-comment">// More bytes are present</span>
+      result |= ((byte &amp; <span class="hljs-number">127</span>) &lt;&lt; shift);
+    &#125; <span class="hljs-keyword">else</span> &#123;
+      result |= (byte &lt;&lt; shift);
+      *value = result;
+      <span class="hljs-keyword">return</span> reinterpret_cast&lt;<span class="hljs-type">const</span> <span class="hljs-type">char</span>*&gt;(p);
+    &#125;
+  &#125;
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
+&#125;
+</code></pre></div>
+
+<p>读到这里可能有读者会问了，Varint 不是为了紧凑 int 的么？那 300 本来可以用 2 个字节表示，现在还是 2 个字节了，哪里紧凑了，花费的空间没有变啊？！</p>
+<p>Varint 确实是一种紧凑的表示数字的方法。它用一个或多个字节来表示一个数字，值越小的数字使用越少的字节数。这能减少用来表示数字的字节数。比如对于 int32 类型的数字，一般需要 4 个 byte 来表示。但是采用 Varint，对于很小的 int32 类型的数字，则可以用 1 个 byte 来表示。当然凡事都有好的也有不好的一面，采用 Varint 表示法，大的数字则需要 5 个 byte 来表示。从统计的角度来说，一般不会所有的消息中的数字都是大数，因此大多数情况下，采用 Varint 后，可以用更少的字节数来表示数字信息。</p>
+<p>300 如果用 int32 表示，需要 4 个字节，现在用 Varint 表示，只需要 2 个字节了。缩小了一半！</p>
+<h3 id="1-Message-Structure-编码"><a href="#1-Message-Structure-编码" class="headerlink" title="1. Message Structure 编码"></a>1. Message Structure 编码</h3><p>protocol buffer 中 message 是一系列键值对。message 的二进制版本只是使用字段号(field’s number 和 wire_type)作为 key。每个字段的名称和声明类型只能在解码端通过引用消息类型的定义（即 <code>.proto</code> 文件）来确定。这一点也是人们常常说的 protocol buffer 比 JSON，XML 安全一点的原因，如果没有数据结构描述 <code>.proto</code> 文件，拿到数据以后是无法解释成正常的数据的。</p>
+<p>由于采用了 tag-value 的形式，所以 option 的 field 如果有，就存在在这个 message buffer 中，如果没有，就不会在这里，这一点也算是压缩了 message 的大小了。</p>
+<p>当消息编码时，键和值被连接成一个字节流。当消息被解码时，解析器需要能够跳过它无法识别的字段。这样，可以将新字段添加到消息中，而不会破坏不知道它们的旧程序。这就是所谓的 “向后”兼容性。</p>
+<p>为此，线性的格式消息中每对的“key”实际上是两个值，其中一个是来自<code>.proto</code>文件的字段编号，加上提供正好足够的信息来查找下一个值的长度。在大多数语言实现中，这个 key 被称为 tag。</p>
+<p><strong>注意上图中，3 和 4 已经被废弃了，所以 wire_type 取值目前只有 0、1、2、5</strong>。</p>
+<p>key 的计算方法是 <code>(field_number &lt;&lt; 3) | wire_type</code>，换句话说，key 的最后 3 位表示的就是 <code>wire_type</code>。</p>
+<p>举例，一般 message 的字段号都是 1 开始的，所以对应的 tag 可能是这样的：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">000</span> <span class="hljs-number">1000</span></code></pre></div>
+
+<p>末尾 3 位表示的是 value 的类型，这里是 000，即 0 ，代表的是 varint 值。右移 3 位，即 0001，这代表的就是字段号(field number)。tag 的例子就举这么多，接下来举一个 value 的例子，还是用 varint 来举例：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">96</span> <span class="hljs-number">01</span> = <span class="hljs-number">1001</span> <span class="hljs-number">0110</span>  <span class="hljs-number">0000</span> <span class="hljs-number">0001</span>
+       → <span class="hljs-number">000</span> <span class="hljs-number">0001</span>  ++  <span class="hljs-number">001</span> <span class="hljs-number">0110</span> (drop the msb and reverse the groups of <span class="hljs-number">7</span> bits)
+       → <span class="hljs-number">10010110</span>
+       → <span class="hljs-number">128</span> + <span class="hljs-number">16</span> + <span class="hljs-number">4</span> + <span class="hljs-number">2</span> = <span class="hljs-number">150</span></code></pre></div>
+
+<p>可以 96 01 代表的数据就是 150 。</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Test1</span> &#123;
+  <span class="hljs-keyword">required</span> <span class="hljs-type">int32</span> a = <span class="hljs-number">1</span>;
+&#125;</code></pre></div>
+
+<p>如果存在上面这样的一个 message 的结构，如果存入 150，在 Protocol Buffer 中显示的二进制应该为 08 96 01 。</p>
+<p>额外说一句，type 需要注意的是 type &#x3D; 2 的情况，tag 里面除了包含 field number 和 wire_type ，还需要再包含一个 length，决定 value 从那一段取出来。（具体原因见 <a target="_blank" rel="noopener" href="https://github.com/halfrost/Halfrost-Field/blob/master/contents/Protocol/Protocol-buffers-encode.md#4-%E5%AD%97%E7%AC%A6%E4%B8%B2">Protocol Buffer 字符串</a> 这一章节）</p>
+<h3 id="2-Signed-Integers-编码"><a href="#2-Signed-Integers-编码" class="headerlink" title="2. Signed Integers 编码"></a>2. Signed Integers 编码</h3><p>从上面的表格里面可以看到 wire_type &#x3D; 0 中包含了无符号的 varints，但是如果是一个无符号数呢？</p>
+<p>一个负数一般会被表示为一个很大的整数，因为计算机定义负数的符号位为数字的最高位。如果采用 Varint 表示一个负数，那么一定需要 10 个 byte 长度。</p>
+<blockquote>
+<p>为何 32 位和 64 位的负数都需要 10 个 byte 长度呢？</p>
+<div class="code-wrapper"><pre><code class="hljs cpp"><span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">CodedOutputStream::WriteVarint32SignExtended</span><span class="hljs-params">(int32 value)</span> </span>&#123;
+ <span class="hljs-built_in">WriteVarint64</span>(<span class="hljs-built_in">static_cast</span>&lt;uint64&gt;(value));
+&#125;</code></pre></div>
+
+<p>因为源码里面是这么规定的。32 位的有符号数都会转换成 64 位无符号来处理。至于源码为什么要这么规定呢，猜想可能是怕 32 位的负数转换会有溢出的可能。(只是猜想)</p>
+</blockquote>
+<p>为此 Google Protocol Buffer 定义了 sint32 这种类型，采用 zigzag 编码。<strong>将所有整数映射成无符号整数，然后再采用 varint 编码方式编码</strong>，这样，绝对值小的整数，编码后也会有一个较小的 varint 编码值。</p>
+<p>Zigzag 映射函数为：</p>
+<div class="code-wrapper"><pre><code class="hljs c">Zigzag(n) = (n &lt;&lt; <span class="hljs-number">1</span>) ^ (n &gt;&gt; <span class="hljs-number">31</span>), n 为 sint32 时
+
+Zigzag(n) = (n &lt;&lt; <span class="hljs-number">1</span>) ^ (n &gt;&gt; <span class="hljs-number">63</span>), n 为 sint64 时</code></pre></div>
+
+<p>按照这种方法，-1 将会被编码成 1，1 将会被编码成 2，-2 会被编码成 3，如下表所示：</p>
+<p>需要注意的是，第二个转换 <code>（n &gt;&gt; 31）</code> 部分，是一个算术转换。所以，换句话说，移位的结果要么是一个全为0（如果n是正数），要么是全部1（如果n是负数）。</p>
+<p>当 sint32 或 sint64 被解析时，它的值被解码回原始的带符号的版本。</p>
+<h3 id="3-Non-varint-Numbers"><a href="#3-Non-varint-Numbers" class="headerlink" title="3. Non-varint Numbers"></a>3. Non-varint Numbers</h3><p>Non-varint 数字比较简单，double 、fixed64 的 wire_type 为 1，在解析时告诉解析器，该类型的数据需要一个 64 位大小的数据块即可。同理，float 和 fixed32 的 wire_type 为5，给其 32 位数据块即可。两种情况下，都是高位在后，低位在前。</p>
+<p><strong>说 Protocol Buffer 压缩数据没有到极限，原因就在这里，因为并没有压缩 float、double 这些浮点类型</strong>。</p>
+<h3 id="4-字符串"><a href="#4-字符串" class="headerlink" title="4. 字符串"></a>4. 字符串</h3><p>wire_type 类型为 2 的数据，是一种指定长度的编码方式：key + length + content，key 的编码方式是统一的，length 采用 varints 编码方式，content 就是由 length 指定长度的 Bytes。</p>
+<p>举例，假设定义如下的 message 格式：</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Test2</span> &#123;
+  <span class="hljs-keyword">optional</span> <span class="hljs-type">string</span> b = <span class="hljs-number">2</span>;
+&#125;</code></pre></div>
+
+<p>设置该值为”testing”，二进制格式查看：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">12</span> <span class="hljs-number">07</span> <span class="hljs-number">74</span> <span class="hljs-number">65</span> <span class="hljs-number">73</span> <span class="hljs-number">74</span> <span class="hljs-number">69</span> <span class="hljs-number">6</span>e <span class="hljs-number">67</span></code></pre></div>
+
+<p>74 65 73 74 69 6e 67  是“testing”的 UTF8 代码。</p>
+<p>此处，key 是16进制表示的，所以展开是：</p>
+<p>12 -&gt; 0001 0010，后三位 010 为 wire type &#x3D; 2，0001 0010 右移三位为 0000 0010，即 tag &#x3D; 2。</p>
+<p>length 此处为 7，后边跟着 7 个bytes，即我们的字符串”testing”。</p>
+<p><strong>所以 wire_type 类型为 2 的数据，编码的时候会默认转换为 T-L-V (Tag - Length - Value)的形式</strong>。</p>
+<h3 id="5-嵌入式-message"><a href="#5-嵌入式-message" class="headerlink" title="5. 嵌入式 message"></a>5. 嵌入式 message</h3><p>假设，定义如下嵌套消息：</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Test3</span> &#123;
+  <span class="hljs-keyword">optional</span> Test1 c = <span class="hljs-number">3</span>;
+&#125;</code></pre></div>
+
+<p>设置字段为整数150，编码后的字节为：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">1</span>a <span class="hljs-number">03</span> <span class="hljs-number">08</span> <span class="hljs-number">96</span> <span class="hljs-number">01</span></code></pre></div>
+
+<p>08 96 01 这三个代表的是 150，上面讲解过，这里就不再赘述了。</p>
+<p>1a -&gt; 0001 1010，后三位 010 为 wire type &#x3D; 2，0001 1010 右移三位为 0000 0011，即 tag &#x3D; 3。</p>
+<p>length 为 3，代表后面有 3 个字节，即 08 96 01 。</p>
+<p>需要转变为 T - L - V 形式的还有 string, bytes, embedded messages, packed repeated fields （即 wire_type 为 2 的形式都会转变成 T - L - V 形式）</p>
+<h3 id="6-Optional-和-Repeated-的编码"><a href="#6-Optional-和-Repeated-的编码" class="headerlink" title="6. Optional 和 Repeated 的编码"></a>6. Optional 和 Repeated 的编码</h3><p>在 proto2 中定义成 repeated 的字段，（没有加上 [packed&#x3D;true] option ），编码后的 message 有一个或者多个包含相同 tag 数字的 key-value 对。这些重复的 value 不需要连续的出现；他们可能与其他的字段间隔的出现。尽管他们是无序的，但是在解析时，他们是需要有序的。在 proto3 中 repeated 字段默认采用 packed 编码（具体原因见 <a target="_blank" rel="noopener" href="https://github.com/halfrost/Halfrost-Field/blob/master/contents/Protocol/Protocol-buffers-encode.md#7-packed-repeated-fields">Packed Repeated Fields</a> 这一章节）</p>
+<p>对于 proto3 中的任何非重复字段或 proto2 中的可选字段，编码的 message 可能有也可能没有包含该字段号的键值对。</p>
+<p>通常，编码后的 message，其 required 字段和 optional 字段最多只有一个实例。但是解析器却需要处理多对一的情况。对于数字类型和 string 类型，如果同一值出现多次，解析器接受最后一个它收到的值。对于内嵌字段，解析器合并(merge)它接收到的同一字段的多个实例。就如 MergeFrom 方法一样，所有单数的字段，后来的会替换先前的，所有单数的内嵌 message 都会被合并(merge)，所有的 repeated 字段，都会串联起来。这样的规则的结果是，<strong>解析两个串联的编码后的 message，与分别解析两个 message 然后 merge，结果是一样的</strong>。例如：</p>
+<div class="code-wrapper"><pre><code class="hljs c">MyMessage message;
+message.ParseFromString(str1 + str2);</code></pre></div>
+
+<p>等价于</p>
+<div class="code-wrapper"><pre><code class="hljs c">MyMessage message, message2;
+message.ParseFromString(str1);
+message2.ParseFromString(str2);
+message.MergeFrom(message2);</code></pre></div>
+
+<p>这种方法有时是非常有用的。比如，即使不知道 message 的类型，也能够将其合并。</p>
+<h3 id="7-Packed-Repeated-Fields"><a href="#7-Packed-Repeated-Fields" class="headerlink" title="7. Packed Repeated Fields"></a>7. Packed Repeated Fields</h3><p>在 2.1.0 版本以后，protocol buffers 引入了该种类型，其与 repeated 字段一样，只是在末尾声明了 [packed&#x3D;true]。类似 repeated 字段却又不同。在 proto3 中 Repeated 字段默认就是以这种方式处理。对于 packed repeated 字段，如果 message 中没有赋值，则不会出现在编码后的数据中。否则的话，该字段所有的元素会被打包到单一一个 key-value 对中，且它的 wire_type&#x3D;2，长度确定。每个元素正常编码，只不过其前没有标签 tag。例如有如下 message 类型：</p>
+<div class="code-wrapper"><pre><code class="hljs protobuf"><span class="hljs-keyword">message </span><span class="hljs-title class_">Test4</span> &#123;
+  <span class="hljs-keyword">repeated</span> <span class="hljs-type">int32</span> d = <span class="hljs-number">4</span> [packed=<span class="hljs-literal">true</span>];
+&#125;</code></pre></div>
+
+<p>构造一个 Test4 字段，并且设置 repeated 字段 d 3个值：3，270和86942，编码后：</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-number">22</span> <span class="hljs-comment">// tag 0010 0010(field number 010 0 = 4, wire type 010 = 2)</span>
+
+<span class="hljs-number">06</span> <span class="hljs-comment">// payload size (设置的length = 6 bytes)</span>
+
+<span class="hljs-number">03</span> <span class="hljs-comment">// first element (varint 3)</span>
+
+<span class="hljs-number">8</span>E <span class="hljs-number">02</span> <span class="hljs-comment">// second element (varint 270)</span>
+
+<span class="hljs-number">9</span>E A7 <span class="hljs-number">05</span> <span class="hljs-comment">// third element (varint 86942)</span></code></pre></div>
+
+<p><strong>形成了 Tag - Length - Value - Value - Value …… 对</strong>。</p>
+<p>只有原始数字类型（使用varint，32位或64位）的重复字段才可以声明为“packed”。</p>
+<p>有一点需要注意，对于 packed 的 repeated 字段，尽管通常没有理由将其编码为多个 key-value 对，编码器必须有接收多个 key-pair 对的准备。这种情况下，payload 必须是串联的，每个 pair 必须包含完整的元素。</p>
+<p>Protocol Buffer 解析器必须能够解析被重新编译为 packed 的字段，就像它们未被 packed 一样，反之亦然。这允许以正向和反向兼容的方式将[packed &#x3D; true]添加到现有字段。</p>
+<h3 id="8-Field-Order"><a href="#8-Field-Order" class="headerlink" title="8. Field Order"></a>8. Field Order</h3><p>编码&#x2F;解码与字段顺序无关，这一点由 key-value 机制保证。</p>
+<p>如果消息具有未知字段，则当前的 Java 和 C++ 实现在按顺序排序的已知字段之后以任意顺序写入它们。当前的 Python 实现不会跟踪未知字段。</p>
+<h2 id="七-protocol-buffers-的优缺点"><a href="#七-protocol-buffers-的优缺点" class="headerlink" title="七. protocol buffers 的优缺点"></a>七. protocol buffers 的优缺点</h2><p>protocol buffers 在序列化方面，与 XML 相比，有诸多优点：</p>
+<ul>
+<li>更加简单</li>
+<li>数据体积小 3- 10 倍</li>
+<li>更快的反序列化速度，提高 20 - 100 倍</li>
+<li>可以自动化生成更易于编码方式使用的数据访问类</li>
+</ul>
+<p>举个例子：</p>
+<p>如果要编码一个用户的名字和 email 信息，用 XML 的方式如下：</p>
+<div class="code-wrapper"><pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">person</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">name</span>&gt;</span>John Doe<span class="hljs-tag">&lt;/<span class="hljs-name">name</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">email</span>&gt;</span>jdoe@example.com<span class="hljs-tag">&lt;/<span class="hljs-name">email</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">person</span>&gt;</span></code></pre></div>
+
+<p>相同需求，如果换成 protocol buffers 来实现，定义文件如下：</p>
+<div class="code-wrapper"><pre><code class="hljs c"># Textual representation of a protocol buffer.
+# This is *not* the binary format used on the wire.
+person &#123;
+  name: <span class="hljs-string">&quot;John Doe&quot;</span>
+  email: <span class="hljs-string">&quot;jdoe@example.com&quot;</span>
+&#125;</code></pre></div>
+
+<p>protocol buffers 通过编码以后，以二进制的方式进行数据传输，最多只需要 28 bytes 空间和 100-200 ns 的反序列化时间。但是 XML 则至少需要 69 bytes 空间（经过压缩以后，去掉所有空格）和 5000-10000 的反序列化时间。</p>
+<p>上面说的是性能方面的优势。接下来说说编码方面的优势。</p>
+<p>protocol buffers 自带代码生成工具，可以生成友好的数据访问存储接口。从而开发人员使用它来编码更加方便。例如上面的例子，如果用 C++ 的方式去读取用户的名字和 email，直接调用对应的 get 方法即可（所有属性的 get 和 set 方法的代码都自动生成好了，只需要调用即可）</p>
+<div class="code-wrapper"><pre><code class="hljs c"><span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">&quot;Name: &quot;</span> &lt;&lt; person.name() &lt;&lt; <span class="hljs-built_in">endl</span>;
+<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">&quot;E-mail: &quot;</span> &lt;&lt; person.email() &lt;&lt; <span class="hljs-built_in">endl</span>;</code></pre></div>
+
+<p>而 XML 读取数据会麻烦一些：</p>
+<div class="code-wrapper"><pre><code class="hljs xml">cout &lt;&lt; &quot;Name: &quot;
+     &lt;&lt; person.getElementsByTagName(&quot;name&quot;)-&gt;item(0)-&gt;innerText()
+     &lt;&lt; endl;
+cout &lt;&lt; &quot;E-mail: &quot;
+     &lt;&lt; person.getElementsByTagName(&quot;email&quot;)-&gt;item(0)-&gt;innerText()
+     &lt;&lt; endl;</code></pre></div>
+
+<p>Protobuf 语义更清晰，无需类似 XML 解析器的东西（因为 Protobuf 编译器会将 .proto 文件编译生成对应的数据访问类以对 Protobuf 数据进行序列化、反序列化操作）。</p>
+<p>使用 Protobuf 无需学习复杂的文档对象模型，Protobuf 的编程模式比较友好，简单易学，同时它拥有良好的文档和示例，对于喜欢简单事物的人们而言，Protobuf 比其他的技术更加有吸引力。</p>
+<p>protocol buffers 最后一个非常棒的特性是，即“向后”兼容性好，人们不必破坏已部署的、依靠“老”数据格式的程序就可以对数据结构进行升级。这样您的程序就可以不必担心因为消息结构的改变而造成的大规模的代码重构或者迁移的问题。因为添加新的消息中的 field 并不会引起已经发布的程序的任何改变(因为存储方式本来就是无序的，k-v 形式)。</p>
+<p>当然 protocol buffers 也并不是完美的，在使用上存在一些局限性。</p>
+<p>由于文本并不适合用来描述数据结构，所以 Protobuf 也不适合用来对基于文本的标记文档（如 HTML）建模。另外，由于 XML 具有某种程度上的自解释性，它可以被人直接读取编辑，在这一点上 Protobuf 不行，它以二进制的方式存储，除非你有 <code>.proto</code> 定义，否则你没法直接读出 Protobuf 的任何内容。</p>
+<h2 id="八-最后"><a href="#八-最后" class="headerlink" title="八. 最后"></a>八. 最后</h2><p>读完本篇 Protocol Buffer 编码原理以后，读者应该能明白以下几点：</p>
+<ol>
+<li>Protocol Buffer 利用 varint 原理压缩数据以后，二进制数据非常紧凑，option 也算是压缩体积的一个举措。所以 pb 体积更小，如果选用它作为网络数据传输，势必相同数据，消耗的网络流量更少。但是并没有压缩到极限，float、double 浮点型都没有压缩。</li>
+<li>Protocol Buffer 比 JSON 和 XML 少了 {、}、: 这些符号，体积也减少一些。再加上 varint 压缩，gzip 压缩以后体积更小！</li>
+<li>Protocol Buffer 是 Tag - Value (Tag - Length - Value)的编码方式的实现，减少了分隔符的使用，数据存储更加紧凑。</li>
+<li>Protocol Buffer 另外一个核心价值在于提供了一套工具，一个编译工具，自动化生成 get&#x2F;set 代码。简化了多语言交互的复杂度，使得编码解码工作有了生产力。</li>
+<li>Protocol Buffer 不是自我描述的，离开了数据描述 <code>.proto</code> 文件，就无法理解二进制数据流。这点即是优点，使数据具有一定的“加密性”，也是缺点，数据可读性极差。所以 Protocol Buffer 非常适合内部服务之间 RPC 调用和传递数据。</li>
+<li>Protocol Buffer 具有向后兼容的特性，更新数据结构以后，老版本依旧可以兼容，这也是 Protocol Buffer 诞生之初被寄予解决的问题。因为编译器对不识别的新增字段会跳过不处理。</li>
+</ol>
+<p>Protocol Buffer 编码原理篇到此结束，下篇来讲讲 Protocol Buffer 反序列化解包性能快的原因。</p>
+<p>Reference：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://developers.google.com/protocol-buffers/docs/overview">google 官方文档</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://halfrost.com/protobuf_encode/">原文地址</a></p>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81/" class="category-chain-item">数据编码</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BC%96%E7%A0%81/">#数据编码</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Protobuf 高效的数据压缩编码方式</div>
+      <div>https://icoobin.github.io/2023/02/28/other/Protobuf-高效的数据压缩编码方式/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/28/other/%E5%8D%95%E9%93%BE%E8%A1%A8-Singly-Linked-List/" title="单链表 (Singly Linked List)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">单链表 (Singly Linked List)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/28/ios/iOS-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" title="iOS 性能优化">
+                        <span class="hidden-mobile">iOS 性能优化</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

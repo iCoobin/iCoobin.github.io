@@ -1,0 +1,1067 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="创建型模式（Creational Patterns）1. 简单工厂模式（Simple Factory Pattern）简单工厂模式（Simple Factory Pattern）是一种创建型设计模式，它的主要目的是提供一个统一的接口来创建对象，而无需暴露具体的创建逻辑。该模式常用来解决创建对象时客户端代码需要知道所有可能被创建对象类的问题。 在简单工厂模式中，通常包括一个工厂类和多个产品类。工厂类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="24 种设计模式-1 (Swift 5版)">
+<meta property="og:url" content="https://icoobin.github.io/2023/02/25/other/24-%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-1-Swift-5%E7%89%88/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="创建型模式（Creational Patterns）1. 简单工厂模式（Simple Factory Pattern）简单工厂模式（Simple Factory Pattern）是一种创建型设计模式，它的主要目的是提供一个统一的接口来创建对象，而无需暴露具体的创建逻辑。该模式常用来解决创建对象时客户端代码需要知道所有可能被创建对象类的问题。 在简单工厂模式中，通常包括一个工厂类和多个产品类。工厂类">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-25T04:08:03.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:38:09.808Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>24 种设计模式-1 (Swift 5版) - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="24 种设计模式-1 (Swift 5版)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-25 12:08" pubdate>
+          2023年2月25日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          67 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">24 种设计模式-1 (Swift 5版)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="创建型模式（Creational-Patterns）"><a href="#创建型模式（Creational-Patterns）" class="headerlink" title="创建型模式（Creational Patterns）"></a>创建型模式（Creational Patterns）</h2><h3 id="1-简单工厂模式（Simple-Factory-Pattern）"><a href="#1-简单工厂模式（Simple-Factory-Pattern）" class="headerlink" title="1. 简单工厂模式（Simple Factory Pattern）"></a>1. 简单工厂模式（Simple Factory Pattern）</h3><p>简单工厂模式（Simple Factory Pattern）是一种创建型设计模式，它的主要目的是提供一个统一的接口来创建对象，而无需暴露具体的创建逻辑。该模式常用来解决创建对象时客户端代码需要知道所有可能被创建对象类的问题。</p>
+<p>在简单工厂模式中，通常包括一个工厂类和多个产品类。工厂类根据客户端请求的参数来决定创建哪个产品类的对象，并返回给客户端。这样客户端就无需直接调用产品类的构造函数来创建对象了。</p>
+<p>以下是一个使用简单工厂模式的示例代码：</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 定义一个接口，所有产品类都要实现这个接口</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">use</span>()
+&#125;
+
+<span class="hljs-comment">// 具体的产品类实现 Product 接口</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ProductA</span>: <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">use</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ProductA used&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ProductB</span>: <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">use</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ProductB used&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 简单工厂类</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SimpleFactory</span> &#123;
+    <span class="hljs-keyword">enum</span> <span class="hljs-title class_">ProductType</span> &#123;
+        <span class="hljs-keyword">case</span> <span class="hljs-type">A</span>, <span class="hljs-type">B</span>
+    &#125;
+
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">createProduct</span>(<span class="hljs-params">type</span>: <span class="hljs-type">ProductType</span>) -&gt; <span class="hljs-type">Product</span> &#123;
+        <span class="hljs-keyword">switch</span> type &#123;
+        <span class="hljs-keyword">case</span> .<span class="hljs-type">A</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-type">ProductA</span>()
+        <span class="hljs-keyword">case</span> .<span class="hljs-type">B</span>:
+            <span class="hljs-keyword">return</span> <span class="hljs-type">ProductB</span>()
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 客户端代码</span>
+<span class="hljs-keyword">let</span> productA <span class="hljs-operator">=</span> <span class="hljs-type">SimpleFactory</span>.createProduct(type: .<span class="hljs-type">A</span>)
+productA.use() <span class="hljs-comment">// 输出: &quot;ProductA used&quot;</span>
+
+<span class="hljs-keyword">let</span> productB <span class="hljs-operator">=</span> <span class="hljs-type">SimpleFactory</span>.createProduct(type: .<span class="hljs-type">B</span>)
+productB.use() <span class="hljs-comment">// 输出: &quot;ProductB used&quot;</span></code></pre></div></li>
+</ul>
+<p>在上面的示例代码中，**<code>Product</code>** 定义了一个使用产品的接口。**<code>ProductA</code>** 和 <strong><code>ProductB</code></strong> 是具体的产品类，它们都实现了 <strong><code>Product</code></strong> 接口。**<code>SimpleFactory</code>** 是简单工厂类，它根据客户端请求的参数来创建不同的产品类的对象，然后返回给客户端。最后，客户端通过调用返回的对象的 <strong><code>use</code></strong> 方法来使用产品。</p>
+<h3 id="2-抽象工厂模式（Abstract-Factory-Pattern）"><a href="#2-抽象工厂模式（Abstract-Factory-Pattern）" class="headerlink" title="2. 抽象工厂模式（Abstract Factory Pattern）"></a>2. 抽象工厂模式（Abstract Factory Pattern）</h3><p>抽象工厂模式（Abstract Factory Pattern）是一种创建型设计模式，它提供了一种创建一系列相关或相互依赖对象的接口，而无需指定它们的具体类。这种模式属于对象创建型模式，它解决了在不指定对象具体类的情况下创建一系列相关或相互依赖的对象问题。</p>
+<p>抽象工厂模式通常用于以下场景：</p>
+<ul>
+<li>一个系统要独立于它的产品的创建、组合和表示时</li>
+<li>一个系统要由多个产品系列中的一个来配置时</li>
+<li>强调一系列相关的产品对象的设计以便进行联合使用时</li>
+<li>提供一个产品类库，只想显示它的接口而不是实现时</li>
+</ul>
+<p>下面是一个简单的 Swift 5 示例，展示了如何使用抽象工厂模式创建和使用不同系列的产品对象。假设我们需要创建一组不同的计算机，每台计算机包含 CPU 和主板，分为 Intel 和 AMD 两个系列。我们可以定义一个 <strong><code>AbstractFactory</code></strong> 协议，其中包含了创建 CPU 和主板的两个方法，然后定义两个具体的工厂类 <strong><code>IntelFactory</code></strong> 和 <strong><code>AMDFactory</code></strong> 分别实现该协议，以便创建相应系列的产品。最后，我们可以在客户端中使用工厂对象来创建所需的产品。</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 抽象产品协议</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">CPU</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">get</span> &#125;
+&#125;
+
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Motherboard</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">get</span> &#125;
+&#125;
+
+<span class="hljs-comment">// 抽象工厂协议</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">AbstractFactory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createCPU</span>() -&gt; <span class="hljs-type">CPU</span>
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createMotherboard</span>() -&gt; <span class="hljs-type">Motherboard</span>
+&#125;
+
+<span class="hljs-comment">// 具体产品</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">IntelCPU</span>: <span class="hljs-title class_">CPU</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Intel CPU&quot;</span>
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">IntelMotherboard</span>: <span class="hljs-title class_">Motherboard</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Intel Motherboard&quot;</span>
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AMDCPU</span>: <span class="hljs-title class_">CPU</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;AMD CPU&quot;</span>
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AMDMotherboard</span>: <span class="hljs-title class_">Motherboard</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;AMD Motherboard&quot;</span>
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体工厂</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">IntelFactory</span>: <span class="hljs-title class_">AbstractFactory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createCPU</span>() -&gt; <span class="hljs-type">CPU</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">IntelCPU</span>()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createMotherboard</span>() -&gt; <span class="hljs-type">Motherboard</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">IntelMotherboard</span>()
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AMDFactory</span>: <span class="hljs-title class_">AbstractFactory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createCPU</span>() -&gt; <span class="hljs-type">CPU</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">AMDCPU</span>()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createMotherboard</span>() -&gt; <span class="hljs-type">Motherboard</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">AMDMotherboard</span>()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 客户端代码</span>
+<span class="hljs-keyword">let</span> intelFactory <span class="hljs-operator">=</span> <span class="hljs-type">IntelFactory</span>()
+<span class="hljs-keyword">let</span> amdFactory <span class="hljs-operator">=</span> <span class="hljs-type">AMDFactory</span>()
+
+<span class="hljs-keyword">let</span> intelCPU <span class="hljs-operator">=</span> intelFactory.createCPU()
+<span class="hljs-keyword">let</span> intelMotherboard <span class="hljs-operator">=</span> intelFactory.createMotherboard()
+
+<span class="hljs-keyword">let</span> amdCPU <span class="hljs-operator">=</span> amdFactory.createCPU()
+<span class="hljs-keyword">let</span> amdMotherboard <span class="hljs-operator">=</span> amdFactory.createMotherboard()
+
+<span class="hljs-built_in">print</span>(intelCPU.name) <span class="hljs-comment">// 输出: Intel CPU</span>
+<span class="hljs-built_in">print</span>(intelMotherboard.name) <span class="hljs-comment">// 输出: Intel Motherboard</span>
+<span class="hljs-built_in">print</span>(amdCPU.name) <span class="hljs-comment">// 输出: AMD CPU</span>
+<span class="hljs-built_in">print</span>(amdMotherboard.name) <span class="hljs-comment">// 输出: AMD Motherboard</span></code></pre></div></li>
+</ul>
+<h3 id="3-工厂方法模式（Factory-Method-Pattern）"><a href="#3-工厂方法模式（Factory-Method-Pattern）" class="headerlink" title="3. 工厂方法模式（Factory Method Pattern）"></a>3. 工厂方法模式（Factory Method Pattern）</h3><p>工厂方法模式（Factory Method Pattern）是一种常用的创建型设计模式，它定义了一个用于创建对象的接口，但是让子类决定将哪一个类实例化，工厂方法模式让一个类的实例化延迟到其子类。</p>
+<p>工厂方法模式可以很好地解决创建对象的问题，可以避免直接使用 <strong><code>new</code></strong> 这种方式创建对象，而是通过工厂方法来创建对象，这样可以避免代码中的耦合问题，增强代码的可扩展性和可维护性。</p>
+<p>下面是一个使用 Swift 5 实现工厂方法模式的示例代码：</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 抽象产品</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">get</span> &#125;
+&#125;
+
+<span class="hljs-comment">// 具体产品 A</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ProductA</span>: <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Product A&quot;</span> &#125;
+&#125;
+
+<span class="hljs-comment">// 具体产品 B</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ProductB</span>: <span class="hljs-title class_">Product</span> &#123;
+    <span class="hljs-keyword">var</span> name: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">return</span> <span class="hljs-string">&quot;Product B&quot;</span> &#125;
+&#125;
+
+<span class="hljs-comment">// 抽象工厂</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Factory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createProduct</span>() -&gt; <span class="hljs-type">Product</span>
+&#125;
+
+<span class="hljs-comment">// 具体工厂 A</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">FactoryA</span>: <span class="hljs-title class_">Factory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createProduct</span>() -&gt; <span class="hljs-type">Product</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">ProductA</span>()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体工厂 B</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">FactoryB</span>: <span class="hljs-title class_">Factory</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createProduct</span>() -&gt; <span class="hljs-type">Product</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">ProductB</span>()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 客户端代码</span>
+<span class="hljs-keyword">let</span> factoryA <span class="hljs-operator">=</span> <span class="hljs-type">FactoryA</span>()
+<span class="hljs-keyword">let</span> factoryB <span class="hljs-operator">=</span> <span class="hljs-type">FactoryB</span>()
+
+<span class="hljs-keyword">let</span> productA <span class="hljs-operator">=</span> factoryA.createProduct()
+<span class="hljs-keyword">let</span> productB <span class="hljs-operator">=</span> factoryB.createProduct()
+
+<span class="hljs-built_in">print</span>(productA.name) <span class="hljs-comment">// &quot;Product A&quot;</span>
+<span class="hljs-built_in">print</span>(productB.name) <span class="hljs-comment">// &quot;Product B&quot;</span></code></pre></div></li>
+</ul>
+<p>在这个示例代码中，我们定义了一个 <strong><code>Product</code></strong> 协议，其中包含一个 <strong><code>name</code></strong> 属性，用于表示产品的名称。然后，我们定义了两个具体产品 <strong><code>ProductA</code></strong> 和 **<code>ProductB</code>**，它们分别实现了 <strong><code>Product</code></strong> 协议。</p>
+<p>接着，我们定义了一个 <strong><code>Factory</code></strong> 协议，其中包含一个 <strong><code>createProduct</code></strong> 方法，用于创建产品。然后，我们定义了两个具体工厂 <strong><code>FactoryA</code></strong> 和 **<code>FactoryB</code>**，它们分别实现了 <strong><code>Factory</code></strong> 协议，用于创建不同的产品。</p>
+<p>最后，在客户端代码中，我们实例化了两个具体工厂 <strong><code>factoryA</code></strong> 和 **<code>factoryB</code>**，然后使用它们的 <strong><code>createProduct</code></strong> 方法来创建具体产品 <strong><code>productA</code></strong> 和 **<code>productB</code>**。通过这种方式，我们可以避免在客户端代码中直接使用 <strong><code>new</code></strong> 来创建对象，而是通过工厂方法来创建对象，从而提高了代码的可扩展性和可维护性。</p>
+<h3 id="4-建造者模式（Builder-Pattern）"><a href="#4-建造者模式（Builder-Pattern）" class="headerlink" title="4. 建造者模式（Builder Pattern）"></a>4. 建造者模式（Builder Pattern）</h3><p>建造者模式（Builder Pattern）是一种创建型设计模式，它允许你创建复杂的对象，同时将其构造过程与表示分离。使用建造者模式可以将一个复杂对象的构建过程和表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<p>建造者模式适用于以下情况：</p>
+<ul>
+<li>当需要创建的对象具有复杂的内部结构时，可以使用建造者模式将构造方法的调用顺序与属性的设置分离，从而降低代码的复杂度。</li>
+<li>当需要构建不同属性的对象时，可以使用建造者模式来创建不同的属性组合。</li>
+</ul>
+<p>以下是使用 Swift 5 实现建造者模式的示例代码：</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// Product</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Pizza</span> &#123;
+    <span class="hljs-keyword">var</span> dough: <span class="hljs-type">String</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-keyword">var</span> sauce: <span class="hljs-type">String</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-keyword">var</span> toppings: [<span class="hljs-type">String</span>] <span class="hljs-operator">=</span> []
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">showPizza</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Pizza with <span class="hljs-subst">\(dough)</span> dough, <span class="hljs-subst">\(sauce)</span> sauce and toppings: <span class="hljs-subst">\(toppings.joined(separator: <span class="hljs-string">&quot;, &quot;</span>))</span>&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// Builder</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">PizzaBuilder</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addDough</span>()
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addSauce</span>()
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addToppings</span>()
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getPizza</span>() -&gt; <span class="hljs-type">Pizza</span>
+&#125;
+
+<span class="hljs-comment">// Concrete Builder</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">MargheritaPizzaBuilder</span>: <span class="hljs-title class_">PizzaBuilder</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> pizza <span class="hljs-operator">=</span> <span class="hljs-type">Pizza</span>()
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addDough</span>() &#123;
+        pizza.dough <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Thin crust&quot;</span>
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addSauce</span>() &#123;
+        pizza.sauce <span class="hljs-operator">=</span> <span class="hljs-string">&quot;Tomato sauce&quot;</span>
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addToppings</span>() &#123;
+        pizza.toppings <span class="hljs-operator">=</span> [<span class="hljs-string">&quot;Mozzarella cheese&quot;</span>, <span class="hljs-string">&quot;Basil leaves&quot;</span>]
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getPizza</span>() -&gt; <span class="hljs-type">Pizza</span> &#123;
+        <span class="hljs-keyword">return</span> pizza
+    &#125;
+&#125;
+
+<span class="hljs-comment">// Director</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">PizzaDirector</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> builder: <span class="hljs-type">PizzaBuilder</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">builder</span>: <span class="hljs-type">PizzaBuilder</span>) &#123;
+        <span class="hljs-keyword">self</span>.builder <span class="hljs-operator">=</span> builder
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">makePizza</span>() -&gt; <span class="hljs-type">Pizza</span> &#123;
+        builder.addDough()
+        builder.addSauce()
+        builder.addToppings()
+        <span class="hljs-keyword">return</span> builder.getPizza()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// Client code</span>
+<span class="hljs-keyword">let</span> margheritaBuilder <span class="hljs-operator">=</span> <span class="hljs-type">MargheritaPizzaBuilder</span>()
+<span class="hljs-keyword">let</span> pizzaDirector <span class="hljs-operator">=</span> <span class="hljs-type">PizzaDirector</span>(builder: margheritaBuilder)
+<span class="hljs-keyword">let</span> margheritaPizza <span class="hljs-operator">=</span> pizzaDirector.makePizza()
+margheritaPizza.showPizza()</code></pre></div></li>
+</ul>
+<p>在这个示例中，**<code>Pizza</code>** 是我们要创建的复杂对象，而 <strong><code>PizzaBuilder</code></strong> 协议定义了建造者应该具备的方法，包括添加面团、酱料和配料等。 <strong><code>MargheritaPizzaBuilder</code></strong> 是建造者的具体实现，它实现了 <strong><code>PizzaBuilder</code></strong> 协议中的方法，用于构建玛格丽特比萨。**<code>PizzaDirector</code>** 类负责管理建造者的调用顺序，它根据特定的建造者构建产品。最后，客户端代码使用建造者和指挥者来构建产品并将其展示出来。</p>
+<h3 id="5-原型模式（Prototype-Pattern）"><a href="#5-原型模式（Prototype-Pattern）" class="headerlink" title="5. 原型模式（Prototype Pattern）"></a>5. 原型模式（Prototype Pattern）</h3><p>原型模式（Prototype Pattern）是一种创建型设计模式，它允许通过复制现有对象来创建新对象，而不必通过标准构造函数创建。该模式需要实现一个克隆方法，该方法克隆原型对象并返回副本。这使得客户端能够生成新对象，同时保留原始对象的状态。</p>
+<p>原型模式通常用于创建复杂的对象，这些对象的创建过程比简单的构造函数调用要复杂得多。通常，创建这些对象需要许多步骤和复杂的算法，这些算法需要大量的计算和资源。在这种情况下，使用原型模式可以更有效地生成新对象，因为不需要在每次创建对象时重新计算它们。</p>
+<p>下面是一个使用原型模式的简单示例，其中我们将克隆现有汽车对象以创建新对象。首先，我们需要创建一个“Car”协议，并实现克隆方法：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Car</span>: <span class="hljs-title class_">AnyObject</span>, <span class="hljs-title class_">NSCopying</span> &#123;
+    <span class="hljs-keyword">var</span> model: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">get</span> <span class="hljs-keyword">set</span> &#125;
+    <span class="hljs-keyword">var</span> color: <span class="hljs-type">String</span> &#123; <span class="hljs-keyword">get</span> <span class="hljs-keyword">set</span> &#125;
+    <span class="hljs-keyword">var</span> price: <span class="hljs-type">Double</span> &#123; <span class="hljs-keyword">get</span> <span class="hljs-keyword">set</span> &#125;
+&#125;
+
+<span class="hljs-keyword">extension</span> <span class="hljs-title class_">Car</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">copy</span>(<span class="hljs-params">with</span> <span class="hljs-params">zone</span>: <span class="hljs-type">NSZone</span>? <span class="hljs-operator">=</span> <span class="hljs-literal">nil</span>) -&gt; <span class="hljs-keyword">Any</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">CarPrototype</span>(model: model, color: color, price: price)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CarPrototype</span>: <span class="hljs-title class_">Car</span> &#123;
+    <span class="hljs-keyword">var</span> model: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">var</span> color: <span class="hljs-type">String</span>
+    <span class="hljs-keyword">var</span> price: <span class="hljs-type">Double</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">model</span>: <span class="hljs-type">String</span>, <span class="hljs-params">color</span>: <span class="hljs-type">String</span>, <span class="hljs-params">price</span>: <span class="hljs-type">Double</span>) &#123;
+        <span class="hljs-keyword">self</span>.model <span class="hljs-operator">=</span> model
+        <span class="hljs-keyword">self</span>.color <span class="hljs-operator">=</span> color
+        <span class="hljs-keyword">self</span>.price <span class="hljs-operator">=</span> price
+    &#125;
+&#125;</code></pre></div>
+
+<p>在上面的代码中，我们定义了“Car”协议，并使用“CarPrototype”类实现了该协议。我们还使用“NSCopying”协议为该类提供了克隆方法。</p>
+<p>接下来，我们将创建一个“CarFactory”类，该类将提供一些现有汽车对象，供客户端使用克隆方法生成新对象：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CarFactory</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> prototypes <span class="hljs-operator">=</span> [<span class="hljs-type">String</span>: <span class="hljs-type">Car</span>]()
+
+    <span class="hljs-keyword">init</span>() &#123;
+        prototypes[<span class="hljs-string">&quot;SUV&quot;</span>] <span class="hljs-operator">=</span> <span class="hljs-type">CarPrototype</span>(model: <span class="hljs-string">&quot;SUV&quot;</span>, color: <span class="hljs-string">&quot;Red&quot;</span>, price: <span class="hljs-number">50000</span>)
+        prototypes[<span class="hljs-string">&quot;Coupe&quot;</span>] <span class="hljs-operator">=</span> <span class="hljs-type">CarPrototype</span>(model: <span class="hljs-string">&quot;Coupe&quot;</span>, color: <span class="hljs-string">&quot;Blue&quot;</span>, price: <span class="hljs-number">80000</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">createCar</span>(<span class="hljs-params">ofType</span> <span class="hljs-params">type</span>: <span class="hljs-type">String</span>) -&gt; <span class="hljs-type">Car</span>? &#123;
+        <span class="hljs-keyword">return</span> prototypes[type]<span class="hljs-operator">?</span>.copy() <span class="hljs-keyword">as?</span> <span class="hljs-type">Car</span>
+    &#125;
+&#125;</code></pre></div>
+
+<p>在上面的代码中，我们使用“prototypes”字典来存储现有的汽车对象。客户端可以使用“createCar(ofType:)”方法来获取现有汽车对象的副本，并生成新对象。</p>
+<p>下面是一个示例，演示如何使用“CarFactory”类生成新的汽车对象：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> factory <span class="hljs-operator">=</span> <span class="hljs-type">CarFactory</span>()
+<span class="hljs-keyword">let</span> suv1 <span class="hljs-operator">=</span> factory.createCar(ofType: <span class="hljs-string">&quot;SUV&quot;</span>)
+<span class="hljs-keyword">let</span> suv2 <span class="hljs-operator">=</span> factory.createCar(ofType: <span class="hljs-string">&quot;SUV&quot;</span>)
+
+suv1<span class="hljs-operator">?</span>.model <span class="hljs-comment">// SUV</span>
+suv1<span class="hljs-operator">?</span>.color <span class="hljs-comment">// Red</span>
+suv1<span class="hljs-operator">?</span>.price <span class="hljs-comment">// 50000</span>
+
+suv2<span class="hljs-operator">?</span>.model <span class="hljs-comment">// SUV</span>
+suv2<span class="hljs-operator">?</span>.color <span class="hljs-comment">// Red</span>
+suv2<span class="hljs-operator">?</span>.price <span class="hljs-comment">// 50000</span></code></pre></div>
+
+<h3 id="6-单例模式（Singleton-Pattern）"><a href="#6-单例模式（Singleton-Pattern）" class="headerlink" title="6. 单例模式（Singleton Pattern）"></a>6. 单例模式（Singleton Pattern）</h3><p>单例模式（Singleton Pattern）是一种创建型模式，它保证一个类只有一个实例，并提供一个全局访问点。</p>
+<p>单例模式的常见应用场景包括：</p>
+<ul>
+<li>对于某些类，我们只需要有一个实例，比如系统的日志管理器、线程池、数据库连接池等；</li>
+<li>想要跨越多个模块访问某些数据，可以将数据存储在单例对象中，以便于跨模块访问。</li>
+</ul>
+<p>在 Swift 中，可以使用静态变量或全局变量来实现单例模式，也可以使用结构体来实现。</p>
+<p>以下是一个使用静态变量实现单例模式的例子：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Singleton</span> &#123;
+    <span class="hljs-keyword">static</span> <span class="hljs-keyword">let</span> shared <span class="hljs-operator">=</span> <span class="hljs-type">Singleton</span>()
+
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">init</span>() &#123;
+        <span class="hljs-comment">// 私有化初始化方法，避免在外部创建实例</span>
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">someMethod</span>() &#123;
+        <span class="hljs-comment">// 单例类的其他方法</span>
+    &#125;
+&#125;</code></pre></div>
+
+<p>在上面的例子中，我们使用一个名为 <strong><code>shared</code></strong> 的静态变量来保存唯一的实例。**<code>shared</code>** 变量在第一次访问时会触发 <strong><code>Singleton</code></strong> 类的初始化方法，而由于该方法是私有的，因此无法从外部创建实例。其他的方法则可以通过 <strong><code>Singleton.shared</code></strong> 来访问。由于 Swift 的静态变量是线程安全的，因此该实现方式可以保证单例模式的正确性。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="category-chain-item">设计模式</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>
+      
+        <a href="/tags/Swift/">#Swift</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>24 种设计模式-1 (Swift 5版)</div>
+      <div>https://icoobin.github.io/2023/02/25/other/24-种设计模式-1-Swift-5版/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/25/ios/iOS-%E5%B8%B8%E7%94%A8%E7%9A%84%E5%BC%80%E5%8F%91%E6%9E%B6%E6%9E%84/" title="iOS 常用的开发架构">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">iOS 常用的开发架构</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/25/other/24-%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-2-Swift-5%E7%89%88/" title="24 种设计模式-2 (Swift 5版)">
+                        <span class="hidden-mobile">24 种设计模式-2 (Swift 5版)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

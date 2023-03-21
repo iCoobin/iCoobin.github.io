@@ -1,0 +1,855 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="iOS-Performance-Optimization 原文地址  关于 iOS 性能优化梳理：基本工具、业务优化、内存优化、卡顿优化、电量优化、 安装包瘦身、启动优化、网络优化等 iOS 官方文档 Performance 专题  iOS 性能优化相关书籍 Pro iOS Apps Performance Optimization High Performance iOS Apps  Instr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 性能优化">
+<meta property="og:url" content="https://icoobin.github.io/2023/02/28/ios/iOS-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="iOS-Performance-Optimization 原文地址  关于 iOS 性能优化梳理：基本工具、业务优化、内存优化、卡顿优化、电量优化、 安装包瘦身、启动优化、网络优化等 iOS 官方文档 Performance 专题  iOS 性能优化相关书籍 Pro iOS Apps Performance Optimization High Performance iOS Apps  Instr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://icoobin.github.io/index_imgs/ios.png">
+<meta property="article:published_time" content="2023-02-28T02:35:08.000Z">
+<meta property="article:modified_time" content="2023-02-28T04:07:55.902Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="iOS">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://icoobin.github.io/index_imgs/ios.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>iOS 性能优化 - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="iOS 性能优化"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-28 10:35" pubdate>
+          2023年2月28日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          16 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">iOS 性能优化</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="iOS-Performance-Optimization"><a href="#iOS-Performance-Optimization" class="headerlink" title="iOS-Performance-Optimization"></a>iOS-Performance-Optimization</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tbfungeek/iOS-Performance-Optimization">原文地址</a></li>
+</ul>
+<p>关于 iOS 性能优化梳理：<br>基本工具、业务优化、内存优化、卡顿优化、电量优化、 安装包瘦身、启动优化、网络优化等</p>
+<h2 id="iOS-官方文档"><a href="#iOS-官方文档" class="headerlink" title="iOS 官方文档"></a>iOS 官方文档</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/navigation/#section=Topics&topic=Performance">Performance 专题</a></li>
+</ul>
+<h2 id="iOS-性能优化相关书籍"><a href="#iOS-性能优化相关书籍" class="headerlink" title="iOS 性能优化相关书籍"></a>iOS 性能优化相关书籍</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://download.csdn.net/detail/tskyming/9831453">Pro iOS Apps Performance Optimization</a></li>
+<li><a target="_blank" rel="noopener" href="http://download.csdn.net/detail/tskyming/9831465">High Performance iOS Apps</a></li>
+</ul>
+<h2 id="Instruments-工具相关"><a href="#Instruments-工具相关" class="headerlink" title="Instruments 工具相关"></a>Instruments 工具相关</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/InstrumentsUserGuide/index.html">Instruments User Guide</a> <a target="_blank" rel="noopener" href="http://cdn.cocimg.com/bbs/attachment/Fid_6/6_24457_90eabb4ed5b3863.pdf">中文翻译-PDF</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/lxlx1798/p/6933485.html">Instruments之Leaks学习</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/lxlx1798/p/6933195.html">Instruments学习之Allocations</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/lxlx1798/p/6933604.html">instrument之Time Profiler总结</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/lxlx1798/p/6933364.html">Instruments学习之Core Animation学习</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/lxlx1798/p/6933141.html">Instruments之Activity Monitor使用入门</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/9dbbc91c8059">使用Instrument调试界面卡顿</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/AttackOnDobby/iOS-Core-Animation-Advanced-Techniques/blob/master/12-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98.md">Core Animation性能调优</a></li>
+</ul>
+<h2 id="综合篇"><a href="#综合篇" class="headerlink" title="综合篇"></a>综合篇</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/videos/play/wwdc2012/235">WWDC2012-235-iOS APP Performance:Responsiveness</a></li>
+<li><a target="_blank" rel="noopener" href="http://wereadteam.github.io/2016/05/03/WeRead-Performance/">微信读书iOS性能优化</a></li>
+<li><a target="_blank" rel="noopener" href="http://wereadteam.github.io/2016/12/12/Monitor/">微信读书 iOS 质量保证及性能监控</a></li>
+<li><a target="_blank" rel="noopener" href="https://ming1016.github.io/2017/06/20/deeply-ios-performance-optimization/">深入剖析 iOS 性能优化</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/magicwindow/article/details/51423463">魔窗研发副总裁沈哲：移动端SDK的优化之路</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cocoachina.com/design/20160905/17483.html">搜狗输入法 iOS 版开发与优化实践</a><a target="_blank" rel="noopener" href="https://github.com/MDCC2016/iOS-Session-Slides/blob/master/%E6%90%9C%E7%8B%97%E8%BE%93%E5%85%A5%E6%B3%95%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%AE%9E%E8%B7%B5-%E6%9D%8E%E8%85%BE%E6%9D%B0.pdf">PPT</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/presentations/stability-and-performance-of-mogujie-app">蘑菇街 App 的稳定性与性能实践</a><a target="_blank" rel="noopener" href="https://sanwen8.cn/p/6e5c888.html">PPT</a></li>
+<li><a target="_blank" rel="noopener" href="http://pstatic.geekbang.org/pdf/593a53d813cef.pdf?e=1497499485&token=eHNJKRTldoRsUX0uCP9M3icEhpbyh3VF9Nrk5UPM:sa-xp_aIeIhtiWbqR-hY4ImMzFc=">⼿淘iOS性能优化探索</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/58ca0832a22b9d006418fe43">iOS App 稳定性指标及监测</a></li>
+</ul>
+<h2 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/documentation/Performance/Conceptual/ManagingMemory/ManagingMemory.html#//apple_ref/doc/uid/10000160i">Memory Usage Performance Guidelines</a> </li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a5e13c45188257327399e19">探索iOS内存分配</a> </li>
+<li><a target="_blank" rel="noopener" href="http://wetest.qq.com/lab/view/367.html?from=content_juejin">iOS微信内存监控</a></li>
+</ul>
+<h2 id="卡顿优化"><a href="#卡顿优化" class="headerlink" title="卡顿优化"></a>卡顿优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&idx=1&mid=207890859&scene=23&sn=e98dd604cdb854e7a5808d2072c29162&srcid=0921FzoCw9j1W7n4uFYKuarC#rd">微信iOS卡顿监控系统</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/gatsbywang/p/5555200.html">iOS-卡顿检测</a></li>
+<li><a target="_blank" rel="noopener" href="http://ios.jobbole.com/93085/">iOS监控：卡顿检测</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI5MjEzNzA1MA==&mid=2650264136&idx=1&sn=052c1db8131d4bed8458b98e1ec0d5b0&chksm=f406837dc3710a6b49e76ce3639f671373b553e8a91b544e82bb8747e9adc7985fea1093a394#rd">iOS应用UI线程卡顿监控</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.ibireme.com/2015/11/12/smooth_user_interfaces_for_ios/">iOS 保持界面流畅的技巧</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA4MzEwOTkyMQ==&mid=2667379069&idx=1&sn=376d9ef2261cf13e930406f1c35d3569&chksm=84f32833b384a1250ef66f76a8d050216fd3b0bd4ea99b55f4a609cf268c8169ac2889746245&mpshare=1&scene=1&srcid=0810MDXnroCGDhecWqlXazwE&key=05d58d453d781a66b453e3d41dd8d420839dd771948b07f8c8afe3482922901ad13e8c8ab46f48d0883e9b55d304f6ce272854ecc200f68557644581408036c8ee0c5154fbf413a007cd7617b0e086f6&ascene=0&uin=MjY1NTg0NzMyMQ==&devicetype=iMac+MacBookPro11,4+OSX+OSX+10.12.5+build(16F73)&version=12020810&nettype=WIFI&fontScale=100&pass_ticket=OB4hdN6ImVq0WXd+DAJVSADk3OsXMiJH5VzZqXk/7meSbJNPMBTUB2z5/ct+uPmN">实现 60fps 的网易云音乐首页</a> </li>
+<li><a target="_blank" rel="noopener" href="http://wetest.qq.com/lab/view/354.html">QQ空间掉帧率优化实战</a></li>
+</ul>
+<h2 id="电量优化"><a href="#电量优化" class="headerlink" title="电量优化"></a>电量优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/documentation/Performance/Conceptual/EnergyGuide-iOS/index.html#//apple_ref/doc/uid/TP40015243">Guide - Energy Efficiency Guide for iOS Apps</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/videos/play/wwdc2017/238/">WWDC2017 - Writing Energy Efficient Apps</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ChenYilong/iOSBlog/issues/10">iOS 常见耗电量检测方案调研</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/f0dc653d04ca">教你开发省电的 iOS app（WWDC17 观后）</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a0c5af051882578da0d6925">浅析移动蜂窝网络的特点及其省电方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/q39BHIWsbdNeqfH85EOkIQ">iOS电量测试实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cocoachina.com/ios/20171204/21413.html">iOS进阶–App功耗优化看这篇就够了</a></li>
+</ul>
+<h2 id="启动优化"><a href="#启动优化" class="headerlink" title="启动优化"></a>启动优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/videos/play/wwdc2016/406">WWDC2016-406-Optimizing App Startup Time</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/videos/play/wwdc2017/413">WWDC2017-413-App Startup Time:Past,Present,and Future</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c14987eee107">如何精准度量iOSAPP启动时间</a></li>
+<li><a target="_blank" rel="noopener" href="http://yulingtianxia.com/blog/2016/10/30/Optimizing-App-Startup-Time">优化 App 的启动时间-杨萧玉</a></li>
+<li><a target="_blank" rel="noopener" href="https://techblog.toutiao.com/2017/01/17/iosspeed/#more">iOS客户端启动速度优化-今日头条</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Kf3EbDIUuf0aWVT-UCEmbA">iOS App 启动性能优化-WiFi管家</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cocoachina.com/ios/20160104/14870.html">iOS App如何优化启动时间-Facebook</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/presentations/ios-typewriting-start-speed-optimization">iOS 启动速度优化-百度输入法</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5a31190751882559e225a775">一次立竿见影的启动时间优化</a></li>
+<li><a target="_blank" rel="noopener" href="https://objccn.io/issue-6-3/">obj中国-Mach-O 可执行文件</a></li>
+</ul>
+<h2 id="体积优化"><a href="#体积优化" class="headerlink" title="体积优化"></a>体积优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzAwNDY1ODY2OQ==&mid=207986417&idx=1&sn=77ea7d8e4f8ab7b59111e78c86ccfe66&scene=24&srcid=0921TTAXHGHWKqckEHTvGzoA#rd">iOS微信安装包瘦身</a></li>
+<li><a target="_blank" rel="noopener" href="https://techblog.toutiao.com/2016/12/27/iphone/">今日头条IPA安装包的优化</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/ios-thinning-delete-unnecessary-mach-o">iOS瘦身之删除FrameWork中无用mach-O文件</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/clang-plugin-ios-app-size-reducing">基于clang插件的一种iOS包大小瘦身方案</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.cnbang.net/tech/2544/">iOS可执行文件瘦身方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://crespoxiao.github.io/2016/11/12/iOS%E5%9B%BE%E7%89%87%E4%BC%98%E5%8C%96%E6%96%B9%E6%A1%88/">iOS图片优化方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://ming1016.github.io/2017/06/12/gmtc-ios-slimming-practice/">滴滴出行 iOS 端瘦身实践的 Slides</a></li>
+</ul>
+<h2 id="网络优化"><a href="#网络优化" class="headerlink" title="网络优化"></a>网络优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://tech.meituan.com/SharkSDK.html">美团点评移动网络优化实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzAwMDU1MTE1OQ==&mid=209805123&idx=1&sn=ced8d67c3e2cc3ca38ef722949fa21f8">开源版HttpDNS方案详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/how-ctrip-improves-app-networking-performance">携程App的网络性能优化实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/app-network-service-and-performance-optimization-of-ctrip">2016年携程App网络服务通道治理和性能优化实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/mogujie-app-chromium-network-layer">蘑菇街App Chromium网络栈实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/presentations/mogujie-high-concurrent-multi-terminal-wireless-gateway-practice">蘑菇街高并发多终端无线网关实践</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.cnbang.net/tech/3531/?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io">移动 APP 网络优化概述</a></li>
+</ul>
+<h2 id="编译优化"><a href="#编译优化" class="headerlink" title="编译优化"></a>编译优化</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/fastred/Optimizing-Swift-Build-Times">Optimizing-Swift-Build-Times</a></li>
+</ul>
+<h2 id="APM"><a href="#APM" class="headerlink" title="APM"></a>APM</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzA3ODg4MDk0Ng==&mid=2651112215&idx=1&sn=9cc5b5fa630542a6d4b7a5626e35217a#rd">网易 - NeteaseAPM iOS SDK技术实现分享</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.jianshu.com/p/69ce01e15042">网易乐得 - iOS无埋点数据SDK实践之路</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/presentations/mobile-terminal-apm-product-development-skills">听云 - 移动端 APM 产品研发技能</a> </li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/presentations/mobile-app-performance-monitoring-practice?utm_source=presentations_about_mobile&utm_medium=link&utm_campaign=mobile">听云 - 移动 App 性能监测</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/aozhimin/iOS-Monitor-Platform">iOS 性能监控 SDK —— Wedjat（华狄特）开发过程的调研和整理</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/iOS-APM/iOS-APM-Secrets">揭秘 APM iOS SDK 的核心技术</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/aozhimin/iOS-Monitor-Resources">iOS-Monitor-Resources</a></li>
+</ul>
+<h2 id="调试-amp-Crash"><a href="#调试-amp-Crash" class="headerlink" title="调试 &amp; Crash"></a>调试 &amp; Crash</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/aozhimin/iOS-Debug-Hacks">iOS 项目开发过程中用到的高级调试技巧，涉及三方库动态调试、静态分析和反编译等领域</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.apple.com/library/content/technotes/tn2151/_index.html">Understanding and Analyzing Application Crash Reports</a></li>
+</ul>
+<h2 id="相关开源库"><a href="#相关开源库" class="headerlink" title="相关开源库"></a>相关开源库</h2><h3 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CNSRE/HTTPDNSLib-for-iOS">HTTPDNSLib-for-iOS</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CNSRE/HTTPDNSLib">HTTPDNSLib-for-Andorod</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/coderyi/NetworkEye/blob/master/README_Chinese.md">NetworkEye</a></li>
+</ul>
+<h3 id="卡顿"><a href="#卡顿" class="headerlink" title="卡顿"></a>卡顿</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/suifengqjn/PerformanceMonitor">PerformanceMonitor-Runloop</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/featuretower/GYMonitor">GYMonitor-FPS</a></li>
+</ul>
+<h3 id="瘦身"><a href="#瘦身" class="headerlink" title="瘦身"></a>瘦身</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tinymind/LSUnusedResources">LSUnusedResources</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/huanxsd/LinkMap">LinkMap</a></li>
+</ul>
+<h2 id="APM-1"><a href="#APM-1" class="headerlink" title="APM"></a>APM</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/iOS-APM/iOS-System-Services">iOS-System-Services</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/iOS-APM/SystemMonitor">System Monitor</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Split82/iOSMemoryBudgetTest">iOS Memory Budget Test</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ArmsZhou/PerformanceTestingHelper">PerformanceTestingHelper</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Tencent/GT">GT</a></li>
+</ul>
+<h2 id="Reference："><a href="#Reference：" class="headerlink" title="Reference："></a>Reference：</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tbfungeek/iOS-Performance-Optimization">iOS-Performance-Optimization</a></li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/iOS/" class="category-chain-item">iOS</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/iOS/">#iOS</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>iOS 性能优化</div>
+      <div>https://icoobin.github.io/2023/02/28/ios/iOS-性能优化/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/28/other/Protobuf-%E9%AB%98%E6%95%88%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8E%8B%E7%BC%A9%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F/" title="Protobuf 高效的数据压缩编码方式">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Protobuf 高效的数据压缩编码方式</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/27/other/TCP-%E5%8D%8F%E8%AE%AE%E5%AD%97%E6%AE%B5%E4%BD%8D%E8%AF%A6%E8%A7%A3/" title="TCP 协议字段位详解">
+                        <span class="hidden-mobile">TCP 协议字段位详解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

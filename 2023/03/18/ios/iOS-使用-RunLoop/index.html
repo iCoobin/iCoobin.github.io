@@ -1,0 +1,1024 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="iOS 使用 RunLoop RunLoop 创建并保活RunLoop 与线程是一一对应关系，我们只能通过当前线程首次访问创建并获取当前线程的 RunLoop 对象。有 Foundation 中的 NSRunLoop 和 CoreFoudation 中的 CFRunLoopRef 两种获取方式。 方式1：使用 initWithBlock: 方式创建启动线程 1.1 只在 Block 中启动 Ru">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 使用 RunLoop">
+<meta property="og:url" content="https://icoobin.github.io/2023/03/18/ios/iOS-%E4%BD%BF%E7%94%A8-RunLoop/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="iOS 使用 RunLoop RunLoop 创建并保活RunLoop 与线程是一一对应关系，我们只能通过当前线程首次访问创建并获取当前线程的 RunLoop 对象。有 Foundation 中的 NSRunLoop 和 CoreFoudation 中的 CFRunLoopRef 两种获取方式。 方式1：使用 initWithBlock: 方式创建启动线程 1.1 只在 Block 中启动 Ru">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://icoobin.github.io/index_imgs/runloop.png">
+<meta property="article:published_time" content="2023-03-18T03:04:19.000Z">
+<meta property="article:modified_time" content="2023-03-20T16:29:38.219Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Objective-C">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://icoobin.github.io/index_imgs/runloop.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>iOS 使用 RunLoop - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="iOS 使用 RunLoop"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-18 11:04" pubdate>
+          2023年3月18日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          51 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">iOS 使用 RunLoop</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="iOS-使用-RunLoop"><a href="#iOS-使用-RunLoop" class="headerlink" title="iOS 使用 RunLoop"></a>iOS 使用 RunLoop</h2><p><img src="/index_imgs/runloop.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="RunLoop-创建并保活"><a href="#RunLoop-创建并保活" class="headerlink" title="RunLoop 创建并保活"></a>RunLoop 创建并保活</h3><p>RunLoop 与线程是一一对应关系，我们只能通过当前线程首次访问创建并获取当前线程的 RunLoop 对象。有 Foundation 中的 NSRunLoop 和 CoreFoudation 中的 CFRunLoopRef 两种获取方式。</p>
+<h4 id="方式1：使用-initWithBlock-方式创建启动线程"><a href="#方式1：使用-initWithBlock-方式创建启动线程" class="headerlink" title="方式1：使用 initWithBlock: 方式创建启动线程"></a>方式1：使用 initWithBlock: 方式创建启动线程</h4><ul>
+<li>1.1 只在 Block 中启动 RunLoop<ul>
+<li>该方式 RunLoop 不会对当前 self 对象强引用</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-keyword">self</span>.thread = [[MyThread alloc] initWithBlock:^&#123;
+	<span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+	<span class="hljs-comment">// 线程保活，需要添加一个 Port </span>
+    [runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+                  forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];
+	<span class="hljs-comment">// run 方法运行 runloop，并且 runloop 永远无法关闭</span>
+	[runloop run];
+&#125;];
+[<span class="hljs-keyword">self</span>.thread start];
+
+<span class="hljs-comment">/// 这里的 self 可自由 dealloc</span>
+</code></pre></div>
+
+<ul>
+<li>1.2 在 block 中调用 C  函数启动 RunLoop<ul>
+<li>该方式 RunLoop 不会对当前 self 对象强引用</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-type">void</span> run(<span class="hljs-type">void</span>) &#123;
+	<span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+	<span class="hljs-comment">// 线程保活，需要添加一个 Port </span>
+	[runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+                  forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];
+	<span class="hljs-comment">// run 方法运行 runloop，并且 runloop 永远无法关闭</span>
+	[runloop run];
+&#125;</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-keyword">self</span>.thread = [[MyThread alloc] initWithBlock:^&#123;
+	<span class="hljs-comment">//调用 C 方法获取</span>
+	run();
+&#125;];
+[<span class="hljs-keyword">self</span>.thread start];
+
+<span class="hljs-comment">/// 这种方式获取，runloop 对 self 也不会产生强引用，self 可自由 dealloc</span>
+</code></pre></div>
+
+<ul>
+<li>1.3 调用 [self run] 的方式启动 RunLoop<ul>
+<li>注意：该方式 RunLoop 启动的堆栈会对 self 强引用</li>
+<li>不管 self 是 __weak 还是 strong 都会被 RunLoop 堆栈强引用</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc">- (<span class="hljs-type">void</span>)run &#123;    
+    <span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+    <span class="hljs-comment">// 线程保活，需要添加一个 Port </span>
+    [runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+                  forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];
+	<span class="hljs-comment">// run 方法运行 runloop，并且 runloop 永远无法关闭</span>
+    [runloop run];
+&#125;
+</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs objc">__<span class="hljs-keyword">weak</span> <span class="hljs-keyword">typeof</span>(<span class="hljs-keyword">self</span>) _weakSlef = <span class="hljs-keyword">self</span>;
+<span class="hljs-keyword">self</span>.thread = [[MyThread alloc] initWithBlock:^&#123;
+	<span class="hljs-comment">//给 self 发送消息</span>
+	[_weakSlef run];
+&#125;];
+[<span class="hljs-keyword">self</span>.thread start];
+
+<span class="hljs-comment">/// 这种方式获取，runloop 堆栈会对 self 会产生强引用</span>
+<span class="hljs-comment">/// self 不可自由 dealloc，只有当 runloop 销毁时，self 才能自由释放而不管 </span>
+<span class="hljs-comment">/// 因为 OC 的消息转发实际上会转成 C 函数的调用</span>
+<span class="hljs-comment">/// 第一个参数会默认传递 self 到 run 函数堆栈当中， [runloop run] 会时当前函数堆栈常驻，指导 RunLoop 销毁</span></code></pre></div>
+
+<h4 id="方式2-使用-initWithTarget-selector-object-来启动线程"><a href="#方式2-使用-initWithTarget-selector-object-来启动线程" class="headerlink" title="方式2: 使用 initWithTarget:selector:object: 来启动线程"></a>方式2: 使用 initWithTarget:selector:object: 来启动线程</h4><ul>
+<li>2.1 该方式和 1.3 一样，都使用了消息发送机制<ul>
+<li>因此 self 的生命周期也被 RunLoop 绑定</li>
+<li>只有当 RunLoop 释放后，self 才能自由释放</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc">- (<span class="hljs-type">void</span>)run &#123;    
+    <span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+    <span class="hljs-comment">// 线程保活，需要添加一个 Port </span>
+    [runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+                  forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];
+	<span class="hljs-comment">// run 方法运行 runloop，并且 runloop 永远无法关闭</span>
+    [runloop run];
+&#125;
+</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-keyword">self</span>.thread = [[MyThread alloc] initWithTarget:_weakSelf
+                                          selector:<span class="hljs-keyword">@selector</span>(run)
+                                            object:<span class="hljs-literal">nil</span>];
+[<span class="hljs-keyword">self</span>.thread start];
+&#125;];
+</code></pre></div>
+
+<h4 id="方式3：使用-C-语法方式启动"><a href="#方式3：使用-C-语法方式启动" class="headerlink" title="方式3：使用 C 语法方式启动"></a>方式3：使用 C 语法方式启动</h4><div class="code-wrapper"><pre><code class="hljs objc">
+<span class="hljs-comment">// 创建上下文（要初始化一下结构体）</span>
+<span class="hljs-built_in">CFRunLoopSourceContext</span> context = &#123;<span class="hljs-number">0</span>&#125;;
+
+<span class="hljs-comment">// 创建source</span>
+<span class="hljs-built_in">CFRunLoopSourceRef</span> source = <span class="hljs-built_in">CFRunLoopSourceCreate</span>(kCFAllocatorDefault, <span class="hljs-number">0</span>, &amp;context);
+
+<span class="hljs-comment">// 往Runloop中添加source</span>
+<span class="hljs-built_in">CFRunLoopAddSource</span>(<span class="hljs-built_in">CFRunLoopGetCurrent</span>(), source, kCFRunLoopDefaultMode);
+
+<span class="hljs-comment">// 销毁source</span>
+<span class="hljs-built_in">CFRelease</span>(source);
+
+<span class="hljs-comment">// 启动</span>
+<span class="hljs-comment">//CFRunLoopRunInMode(kCFRunLoopDefaultMode, 1.0e10, false);</span>
+
+<span class="hljs-keyword">while</span> (weakSelf &amp;&amp; !weakSelf.isStopped) &#123;
+    <span class="hljs-comment">// 第3个参数：returnAfterSourceHandled，设置为true，代表执行完source后就会退出当前loop</span>
+    <span class="hljs-built_in">CFRunLoopRunInMode</span>(kCFRunLoopDefaultMode, <span class="hljs-number">1.0e10</span>, <span class="hljs-literal">true</span>);
+&#125;
+</code></pre></div>
+
+
+<h4 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h4><ul>
+<li>创建并启动 RunLoop 需要考虑实际的使用场景</li>
+<li>结合场景需要关心 RunLoop 的生命周期来进行代码设计</li>
+<li>如果是跟随整个 App 生命周期则不用太关心 RunLoop 导致的内存引用问题</li>
+<li>以上使用 [runloop run] 启动的 runloop 是无法手动停止的。</li>
+<li>不注意使用则会导致内存泄漏以及 runloop 泄漏。</li>
+</ul>
+<h3 id="RunLoop-销毁"><a href="#RunLoop-销毁" class="headerlink" title="RunLoop 销毁"></a>RunLoop 销毁</h3><p>RunLoop 的销毁有两种方式，自动销毁和手动销毁。当 RunLoop 中没有添加事件源时，RunLoop 会自动销毁退出循环。当 RunLoop 中有时间源时，我们需要手动停止当前 RunLoop ，并且启动方式需要控制 RunLoop 的循环次数。因为 <code>[runllop run]</code> 启动的 RunLoop 无法手动关闭。</p>
+<ul>
+<li>使用 runMode:beforeDate: 的方式启动一次 RunLoop 循环<ul>
+<li>该方式只会处理一次 RunLoop 循环，当事件都处理完后就会退出。</li>
+<li>手动 while(isRun) 控制它继续循环或停止</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc">- (<span class="hljs-type">void</span>)run &#123;    
+	<span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+	<span class="hljs-comment">// 线程保活，需要添加一个 Port </span>
+	[runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+			 forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];
+	
+	<span class="hljs-comment">// 手动控制循环</span>
+	<span class="hljs-comment">// 这里需要注意 shouldKeepRunning 为 YES 时运行，这样 self 为 nil 时，runloop 能正确停止</span>
+	<span class="hljs-comment">// 如果使用 self.isStop ，则需要判断 while (self &amp;&amp; !self.isStop) 来避免 runloop 无法停止的情况</span>
+	<span class="hljs-keyword">while</span> (<span class="hljs-keyword">self</span>.shouldKeepRunning) &#123;
+		[runloop runMode:<span class="hljs-built_in">NSDefaultRunLoopMode</span>
+			  beforeDate:[<span class="hljs-built_in">NSDate</span> distantFuture]];
+	&#125;
+	<span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot; ---- END -----&quot;</span>);
+&#125;
+
+<span class="hljs-comment">/// 调用该方法需要跳转的 runloop 线程才能调用</span>
+- (<span class="hljs-type">void</span>)stop &#123;
+	<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">self</span>.thread) <span class="hljs-keyword">return</span>;
+	
+	<span class="hljs-comment">// 调用线程 stop</span>
+	[<span class="hljs-keyword">self</span> performSelector:<span class="hljs-keyword">@selector</span>(stopThread)
+ 	             onThread:<span class="hljs-keyword">self</span>.thread
+	           withObject:<span class="hljs-literal">nil</span>
+	        waitUntilDone:<span class="hljs-literal">YES</span>];
+&#125;
+
+- (<span class="hljs-type">void</span>)stopThread &#123;
+	<span class="hljs-comment">/// 手动控制 RunLoop 标识为 NO</span>
+	<span class="hljs-keyword">self</span>.shouldKeepRunning = <span class="hljs-literal">NO</span>;
+	<span class="hljs-comment">/// 结束当前正在执行的 RunLoop 循环</span>
+	<span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+	<span class="hljs-built_in">CFRunLoopStop</span>([runloop getCFRunLoop]);
+	
+	<span class="hljs-comment">// 清空线程，因为 runloop 结束后，线程已经没用了。</span>
+	<span class="hljs-keyword">self</span>.thread = <span class="hljs-literal">nil</span>;
+&#125;
+
+<span class="hljs-comment">/// 手动关闭</span>
+- (<span class="hljs-type">void</span>)didClickCloseRunLoop &#123;
+	<span class="hljs-keyword">if</span> (!<span class="hljs-keyword">self</span>.thread) <span class="hljs-keyword">return</span>;
+	<span class="hljs-comment">// 转到 self.thread RunLoop 所在的线程调用 stopThread</span>
+    [<span class="hljs-keyword">self</span> performSelector:<span class="hljs-keyword">@selector</span>(stopThread)
+                 onThread:<span class="hljs-keyword">self</span>.thread
+               withObject:<span class="hljs-literal">nil</span>
+            waitUntilDone:<span class="hljs-literal">NO</span>];
+&#125;
+
+<span class="hljs-comment">/// self 释放时关闭</span>
+<span class="hljs-comment">/// 注意 RunLoop 对 self 的生命周期持有关系</span>
+<span class="hljs-comment">/// 只有 RunLoop 堆栈对 self 没有持有关系的情况下才能 dealloc 里销毁 RunLoop</span>
+<span class="hljs-comment">/// 否则需要先在其他地方手动先关闭 RunLoop</span>
+- (<span class="hljs-type">void</span>)dealloc &#123;
+
+	<span class="hljs-comment">// 转到 self.thread RunLoop 所在的线程调用 stopThread</span>
+<span class="hljs-comment">//    [self performSelector:@selector(stopThread)</span>
+<span class="hljs-comment">//                 onThread:self.thread</span>
+<span class="hljs-comment">//               withObject:nil</span>
+<span class="hljs-comment">//            waitUntilDone:YES];</span>
+	<span class="hljs-comment">//这里 waitUntilDone: 传 YES，表示等待线程执行完成，就不会有问题</span>
+	<span class="hljs-comment">//如果传 NO 则表示不等线程执行完成，在这里可能会导致 RunLoop 坏内存访问崩溃，因为 runloop 要用 self 发送 stop 消息，这里的 self 早以释放了</span>
+	<span class="hljs-comment">//最好将这句调用抽到一个单独的方法里，防止其他地方随意调用 stop。</span>
+	[<span class="hljs-keyword">self</span> stop];
+
+&#125;
+</code></pre></div>
+
+<h3 id="添加-Port-到-Source1"><a href="#添加-Port-到-Source1" class="headerlink" title="添加 Port 到 Source1"></a>添加 Port 到 Source1</h3><div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-built_in">NSRunLoop</span> *runloop = [<span class="hljs-built_in">NSRunLoop</span> currentRunLoop];
+<span class="hljs-comment">/// runloop 没启动前需要添加一个 Port ，让 RunLoop 保活</span>
+[runloop addPort:[[<span class="hljs-built_in">NSPort</span> alloc] init]
+         forMode:<span class="hljs-built_in">NSRunLoopCommonModes</span>];</code></pre></div>
+
+<h3 id="添加-Observer-到-RunLoop"><a href="#添加-Observer-到-RunLoop" class="headerlink" title="添加 Observer 到 RunLoop"></a>添加 Observer 到 RunLoop</h3><div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-comment">/// 监听 RunLoop</span>
+<span class="hljs-built_in">CFRunLoopObserverRef</span> observer = <span class="hljs-built_in">CFRunLoopObserverCreateWithHandler</span>(kCFAllocatorDefault,
+                                                                   kCFRunLoopAllActivities,
+                                                                   <span class="hljs-literal">YES</span>,
+                                                                   <span class="hljs-number">0</span>,
+                                                                   ^(<span class="hljs-built_in">CFRunLoopObserverRef</span> observer,
+                                                                     <span class="hljs-built_in">CFRunLoopActivity</span> activity) &#123;
+    <span class="hljs-comment">// 处理 RunLoop 事件</span>
+    <span class="hljs-keyword">switch</span> (activity) &#123;
+        <span class="hljs-keyword">case</span> kCFRunLoopEntry:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopEntry&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> kCFRunLoopBeforeTimers:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopBeforeTimers&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> kCFRunLoopBeforeSources:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopBeforeSources&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> kCFRunLoopBeforeWaiting:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopBeforeWaiting&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> kCFRunLoopAfterWaiting:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopAfterWaiting&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">case</span> kCFRunLoopExit:
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;kCFRunLoopEntry&quot;</span>);
+            <span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">default</span>:
+            <span class="hljs-keyword">break</span>;
+    &#125;
+&#125;);
+
+<span class="hljs-built_in">CFRunLoopAddObserver</span>(<span class="hljs-built_in">CFRunLoopGetCurrent</span>(), observer, kCFRunLoopDefaultMode);
+<span class="hljs-built_in">CFRelease</span>(observer);</code></pre></div>
+
+<h3 id="添加-NSTimer-定时器"><a href="#添加-NSTimer-定时器" class="headerlink" title="添加 NSTimer 定时器"></a>添加 NSTimer 定时器</h3><div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-comment">/// 创建 Timer，并自动添加到当前 RunLoop 的 default mode 下</span>
+[<span class="hljs-built_in">NSTimer</span> scheduledTimerWithTimeInterval:<span class="hljs-number">1.0</span> repeats:<span class="hljs-literal">YES</span> block:^(<span class="hljs-built_in">NSTimer</span> * _Nonnull timer) &#123;
+    <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot; timer ！！！&quot;</span>);
+&#125;];</code></pre></div>
+
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-comment">/// 创建 timer，还没有加入到 runloop</span>
+<span class="hljs-built_in">NSTimer</span> *timer = [<span class="hljs-built_in">NSTimer</span> timerWithTimeInterval:<span class="hljs-number">3</span>
+                                        repeats:<span class="hljs-literal">YES</span>
+                                          block:^(<span class="hljs-built_in">NSTimer</span> * _Nonnull timer) &#123;
+    <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot; timer ！！！&quot;</span>);
+&#125;];
+<span class="hljs-comment">/// 把 timer 加入到 runloop default mode 下</span>
+[runloop addTimer:timer forMode:<span class="hljs-built_in">NSDefaultRunLoopMode</span>];</code></pre></div>
+
+<h3 id="添加-Block-任务到-RunLoop"><a href="#添加-Block-任务到-RunLoop" class="headerlink" title="添加 Block 任务到 RunLoop"></a>添加 Block 任务到 RunLoop</h3><ul>
+<li>CFRunLoopPerformBlock<ul>
+<li>不会触发 RunLoop 唤醒</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-built_in">CFRunLoopRef</span> runLoop = <span class="hljs-built_in">CFRunLoopGetCurrent</span>();
+<span class="hljs-comment">/// 往 RunLoop 中添加 Block，但不会立即执行</span>
+<span class="hljs-comment">/// 也不会触发 RunLoop 唤醒，会在 RunLoop 运行时执行。</span>
+<span class="hljs-built_in">CFRunLoopPerformBlock</span>(runLoop, kCFRunLoopDefaultMode, ^&#123;
+    <span class="hljs-comment">/// Block 执行代码</span>
+&#125;);</code></pre></div>
+
+<ul>
+<li>performBlock<ul>
+<li>拿到并持有线程的 RunLoop</li>
+<li>给 RunLoop 运行一个 performBlock 代码块</li>
+<li>会触发 RunLoop 唤醒</li>
+</ul>
+</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc"><span class="hljs-comment">/// 给 RunLoop 一个 Block 执行</span>
+[<span class="hljs-keyword">self</span>.runloop performBlock:^&#123;
+    
+&#125;];
+
+<span class="hljs-comment">/// 给 RunLoop default mode 下一个 Block 执行</span>
+[<span class="hljs-keyword">self</span>.runloop performInModes:@[<span class="hljs-built_in">NSDefaultRunLoopMode</span>] block:^&#123;
+        
+&#125;];
+</code></pre></div>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><section class="footnotes"><div class="footnote-list"><ol><li><span id="fn:1" class="footnote-text"><span><a target="_blank" rel="noopener" href="https://github.dev/opensource-apple/CF">想查看 RunLoop 源码点这里</a>
+<a href="#fnref:1" rev="footnote" class="footnote-backref"> ↩</a></span></span></li></ol></div></section>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/iOS/" class="category-chain-item">iOS</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/iOS/">#iOS</a>
+      
+        <a href="/tags/Objective-C/">#Objective-C</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>iOS 使用 RunLoop</div>
+      <div>https://icoobin.github.io/2023/03/18/ios/iOS-使用-RunLoop/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/03/20/other/Markdown-%E8%AF%AD%E6%B3%95%E7%94%BB%E6%B5%81%E7%A8%8B%E5%9B%BE/" title="Markdown 语法画流程图">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Markdown 语法画流程图</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/17/other/Github-%E9%9D%9E%E5%B8%B8%E5%A5%BD%E7%94%A8%E5%8A%9F%E8%83%BD/" title="Github 非常好用功能">
+                        <span class="hidden-mobile">Github 非常好用功能</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1733 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=light>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/B.svg">
+  <link rel="icon" href="/img/B.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="程守斌">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="行为型模式（Behavioral Patterns）1. 模板方法模式（Template Method Pattern）模板方法模式是一种行为设计模式，其目的是定义一个算法的骨架，而将一些步骤延迟到子类中实现。在模板方法模式中，一个抽象类公开定义了执行它的方法的方式&#x2F;步骤，但是没有实现这些步骤，这些步骤由子类实现。 常用来解决的问题是在一个算法中保持不变的部分在父类中实现，而可变的部分在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="24 种设计模式-3 (Swift 5版)">
+<meta property="og:url" content="https://icoobin.github.io/2023/02/25/other/24-%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-3-Swift-5%E7%89%88/index.html">
+<meta property="og:site_name" content="Bin&#39;s blog">
+<meta property="og:description" content="行为型模式（Behavioral Patterns）1. 模板方法模式（Template Method Pattern）模板方法模式是一种行为设计模式，其目的是定义一个算法的骨架，而将一些步骤延迟到子类中实现。在模板方法模式中，一个抽象类公开定义了执行它的方法的方式&#x2F;步骤，但是没有实现这些步骤，这些步骤由子类实现。 常用来解决的问题是在一个算法中保持不变的部分在父类中实现，而可变的部分在">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-25T03:57:56.000Z">
+<meta property="article:modified_time" content="2023-02-27T05:37:47.684Z">
+<meta property="article:author" content="程守斌">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="Swift">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>24 种设计模式-3 (Swift 5版) - Bin&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"icoobin.github.io","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false,"scope":["home","post"]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":true,"follow_dnt":true,"baidu":"0424c6a81239810100c98bd470a50118","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?0424c6a81239810100c98bd470a50118";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 38.2vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>Bin&#39;s blog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/banner_img/arc.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="24 种设计模式-3 (Swift 5版)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-02-25 11:57" pubdate>
+          2023年2月25日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          26k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          217 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">24 种设计模式-3 (Swift 5版)</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="行为型模式（Behavioral-Patterns）"><a href="#行为型模式（Behavioral-Patterns）" class="headerlink" title="行为型模式（Behavioral Patterns）"></a>行为型模式（Behavioral Patterns）</h2><h3 id="1-模板方法模式（Template-Method-Pattern）"><a href="#1-模板方法模式（Template-Method-Pattern）" class="headerlink" title="1. 模板方法模式（Template Method Pattern）"></a>1. 模板方法模式（Template Method Pattern）</h3><p>模板方法模式是一种行为设计模式，其目的是定义一个算法的骨架，而将一些步骤延迟到子类中实现。在模板方法模式中，一个抽象类公开定义了执行它的方法的方式&#x2F;步骤，但是没有实现这些步骤，这些步骤由子类实现。</p>
+<p>常用来解决的问题是在一个算法中保持不变的部分在父类中实现，而可变的部分在子类中实现，这样可以避免重复的代码，并且方便扩展。</p>
+<p>下面是一个使用 Swift 5 实现模板方法模式的示例：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Coffee</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">prepareRecipe</span>() &#123;
+        boilWater()
+        brew()
+        pourInCup()
+        addCondiments()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">boilWater</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Boiling water&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">pourInCup</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Pouring into cup&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">brew</span>() &#123;
+        <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">&quot;This method must be overridden&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addCondiments</span>() &#123;
+        <span class="hljs-built_in">fatalError</span>(<span class="hljs-string">&quot;This method must be overridden&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithSugar</span>: <span class="hljs-title class_">Coffee</span> &#123;
+    <span class="hljs-keyword">override</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">brew</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Brewing coffee&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">override</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">addCondiments</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Adding sugar&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CoffeeWithMilk</span>: <span class="hljs-title class_">Coffee</span> &#123;
+    <span class="hljs-keyword">override</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">brew</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Brewing coffee&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">override</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">addCondiments</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Adding milk&quot;</span>)
+    &#125;
+&#125;</code></pre></div>
+
+<p>在上面的示例中，Coffee 是抽象类，定义了 prepareRecipe() 方法的骨架，以及 boilWater() 和 pourInCup() 这两个步骤的具体实现。其中，brew() 和 addCondiments() 方法都是抽象的，需要在子类中实现。</p>
+<p>CoffeeWithSugar 和 CoffeeWithMilk 是两个具体的子类，分别实现了 brew() 和 addCondiments() 方法。这样，通过调用 CoffeeWithSugar 和 CoffeeWithMilk 的 prepareRecipe() 方法，就可以制作出带糖和带牛奶的咖啡了。</p>
+<p>下面是示例代码的运行结果：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> coffeeWithSugar <span class="hljs-operator">=</span> <span class="hljs-type">CoffeeWithSugar</span>()
+coffeeWithSugar.prepareRecipe()
+
+<span class="hljs-keyword">let</span> coffeeWithMilk <span class="hljs-operator">=</span> <span class="hljs-type">CoffeeWithMilk</span>()
+coffeeWithMilk.prepareRecipe()</code></pre></div>
+
+<p>输出结果：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-type">Boiling</span> water
+<span class="hljs-type">Brewing</span> coffee
+<span class="hljs-type">Pouring</span> into cup
+<span class="hljs-type">Adding</span> sugar
+
+<span class="hljs-type">Boiling</span> water
+<span class="hljs-type">Brewing</span> coffee
+<span class="hljs-type">Pouring</span> into cup
+<span class="hljs-type">Adding</span> milk</code></pre></div>
+
+<h3 id="2-策略模式（Strategy-Pattern）"><a href="#2-策略模式（Strategy-Pattern）" class="headerlink" title="2. 策略模式（Strategy Pattern）"></a>2. 策略模式（Strategy Pattern）</h3><p>策略模式（Strategy Pattern）是一种行为型设计模式，它允许在运行时动态地选择算法或行为，以解决相似问题的多种解决方案。</p>
+<p>通常，当我们需要实现某种算法或行为，但可能有多种实现方式时，策略模式就非常有用了。使用该模式可以在运行时根据需求选择不同的算法或行为，而不必在代码中硬编码。</p>
+<p>下面是一个使用 Swift 5 实现策略模式的示例，假设我们有一个飞行器接口 **<code>Flyable</code>**，我们需要实现不同的飞行策略，包括直升飞机、固定翼飞机和火箭。</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 飞行器接口</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Flyable</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">fly</span>()
+&#125;
+
+<span class="hljs-comment">// 直升飞机策略</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">HelicopterStrategy</span>: <span class="hljs-title class_">Flyable</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">fly</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;直升飞机在空中盘旋。&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 固定翼飞机策略</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AirplaneStrategy</span>: <span class="hljs-title class_">Flyable</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">fly</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;固定翼飞机在天空中飞行。&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 火箭策略</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">RocketStrategy</span>: <span class="hljs-title class_">Flyable</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">fly</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;火箭在太空中飞行。&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 飞行器类</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Aircraft</span> &#123;
+    <span class="hljs-keyword">var</span> flyStrategy: <span class="hljs-type">Flyable</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">strategy</span>: <span class="hljs-type">Flyable</span>) &#123;
+        <span class="hljs-keyword">self</span>.flyStrategy <span class="hljs-operator">=</span> strategy
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">fly</span>() &#123;
+        <span class="hljs-keyword">self</span>.flyStrategy.fly()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 使用示例</span>
+<span class="hljs-keyword">let</span> helicopter <span class="hljs-operator">=</span> <span class="hljs-type">Aircraft</span>(strategy: <span class="hljs-type">HelicopterStrategy</span>())
+helicopter.fly()  <span class="hljs-comment">// 输出: 直升飞机在空中盘旋。</span>
+
+<span class="hljs-keyword">let</span> airplane <span class="hljs-operator">=</span> <span class="hljs-type">Aircraft</span>(strategy: <span class="hljs-type">AirplaneStrategy</span>())
+airplane.fly()  <span class="hljs-comment">// 输出: 固定翼飞机在天空中飞行。</span>
+
+<span class="hljs-keyword">let</span> rocket <span class="hljs-operator">=</span> <span class="hljs-type">Aircraft</span>(strategy: <span class="hljs-type">RocketStrategy</span>())
+rocket.fly()  <span class="hljs-comment">// 输出: 火箭在太空中飞行。</span></code></pre></div></li>
+</ul>
+<p>在上面的代码中，我们定义了一个 <strong><code>Flyable</code></strong> 接口，表示飞行器的行为。然后，我们创建了三个不同的飞行策略类 <strong><code>HelicopterStrategy</code><strong>、</strong><code>AirplaneStrategy</code></strong> 和 **<code>RocketStrategy</code>**，它们分别实现了 <strong><code>Flyable</code></strong> 接口。</p>
+<p>接着，我们创建了 <strong><code>Aircraft</code></strong> 类，其中包含一个 <strong><code>flyStrategy</code></strong> 属性，该属性用于存储具体的飞行策略对象。**<code>Aircraft</code>** 类的 <strong><code>fly()</code></strong> 方法使用 <strong><code>flyStrategy</code></strong> 属性来调用相应的飞行行为。</p>
+<p>最后，我们创建了三个不同的 <strong><code>Aircraft</code></strong> 实例，并分别传入不同的飞行策略对象，以达到动态选择飞行策略的效果。</p>
+<h3 id="3-观察者模式（Observer-Pattern）"><a href="#3-观察者模式（Observer-Pattern）" class="headerlink" title="3. 观察者模式（Observer Pattern）"></a>3. 观察者模式（Observer Pattern）</h3><p>观察者模式（Observer Pattern）是一种行为型设计模式，它允许一个对象（主题）维护一系列依赖于它的对象（观察者），当主题发生变化时，自动通知观察者进行相应的更新操作。</p>
+<p>通常，当我们需要实现对象之间的松耦合时，观察者模式就非常有用了。使用该模式可以使得主题对象和观察者对象相互独立，只需要定义好接口，就可以在运行时动态地添加或删除观察者。</p>
+<p>下面是一个使用 Swift 5 实现观察者模式的示例，假设我们有一个主题 **<code>Subject</code>**，需要通知多个观察者 **<code>Observer</code>**，以实现一个简单的文本编辑器，当用户输入文本时，通知所有观察者进行相应的更新。</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 主题协议</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Subject</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">registerObserver</span>(<span class="hljs-params">observer</span>: <span class="hljs-type">Observer</span>)
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">removeObserver</span>(<span class="hljs-params">observer</span>: <span class="hljs-type">Observer</span>)
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">notifyObservers</span>()
+&#125;
+
+<span class="hljs-comment">// 观察者协议</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Observer</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">update</span>()
+&#125;
+
+<span class="hljs-comment">// 文本编辑器主题</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TextEditor</span>: <span class="hljs-title class_">Subject</span> &#123;
+    <span class="hljs-keyword">var</span> text: <span class="hljs-type">String</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;</span>
+    <span class="hljs-keyword">var</span> observers: [<span class="hljs-type">Observer</span>] <span class="hljs-operator">=</span> []
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">registerObserver</span>(<span class="hljs-params">observer</span>: <span class="hljs-type">Observer</span>) &#123;
+        <span class="hljs-keyword">self</span>.observers.append(observer)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">removeObserver</span>(<span class="hljs-params">observer</span>: <span class="hljs-type">Observer</span>) &#123;
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">let</span> index <span class="hljs-operator">=</span> <span class="hljs-keyword">self</span>.observers.firstIndex(where: &#123; <span class="hljs-variable">$0</span> <span class="hljs-operator">===</span> observer &#125;) &#123;
+            <span class="hljs-keyword">self</span>.observers.remove(at: index)
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">notifyObservers</span>() &#123;
+        <span class="hljs-keyword">for</span> observer <span class="hljs-keyword">in</span> <span class="hljs-keyword">self</span>.observers &#123;
+            observer.update()
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setText</span>(<span class="hljs-params">text</span>: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.text <span class="hljs-operator">=</span> text
+        <span class="hljs-keyword">self</span>.notifyObservers()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 文本长度观察者</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TextLengthObserver</span>: <span class="hljs-title class_">Observer</span> &#123;
+    <span class="hljs-keyword">var</span> textEditor: <span class="hljs-type">TextEditor</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">textEditor</span>: <span class="hljs-type">TextEditor</span>) &#123;
+        <span class="hljs-keyword">self</span>.textEditor <span class="hljs-operator">=</span> textEditor
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">update</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;文本长度为：<span class="hljs-subst">\(<span class="hljs-keyword">self</span>.textEditor.text.count)</span>&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 大写字母观察者</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">UppercaseObserver</span>: <span class="hljs-title class_">Observer</span> &#123;
+    <span class="hljs-keyword">var</span> textEditor: <span class="hljs-type">TextEditor</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">textEditor</span>: <span class="hljs-type">TextEditor</span>) &#123;
+        <span class="hljs-keyword">self</span>.textEditor <span class="hljs-operator">=</span> textEditor
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">update</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;大写字母为：<span class="hljs-subst">\(<span class="hljs-keyword">self</span>.textEditor.text.filter &#123; <span class="hljs-variable">$0</span>.isUppercase &#125;)</span>&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 使用示例</span>
+<span class="hljs-keyword">let</span> textEditor <span class="hljs-operator">=</span> <span class="hljs-type">TextEditor</span>()
+<span class="hljs-keyword">let</span> lengthObserver <span class="hljs-operator">=</span> <span class="hljs-type">TextLengthObserver</span>(textEditor: textEditor)
+<span class="hljs-keyword">let</span> uppercaseObserver <span class="hljs-operator">=</span> <span class="hljs-type">UppercaseObserver</span>(textEditor: textEditor)
+
+textEditor.registerObserver(observer: lengthObserver)
+textEditor.registerObserver(observer: uppercaseObserver)
+
+textEditor.setText(text: <span class="hljs-string">&quot;Hello, World!&quot;</span>)
+<span class="hljs-comment">// 输出：文本长度为：13</span>
+<span class="hljs-comment">//      大写字母为：HW</span>
+
+textEditor.removeObserver(observer: uppercaseObserver)
+textEditor.setText(text: <span class="hljs-string">&quot;Welcome to the world of programming!&quot;</span>)
+<span class="hljs-comment">// 输出：文本长度为：35</span></code></pre></div></li>
+</ul>
+<p>在上面的代码中，我们定义了一个 <strong><code>Subject</code></strong> 协议，表示主题对象的行为。主题对象可以注册、移除和通知观察者，这些行为在协议中被定义</p>
+<p>我们还定义了一个 <strong><code>Observer</code></strong> 协议，表示观察者对象的行为。观察者需要实现 <strong><code>update()</code></strong> 方法，在被通知时执行相应的更新操作。</p>
+<p>接下来，我们定义了一个文本编辑器主题 **<code>TextEditor</code>**，它实现了 <strong><code>Subject</code></strong> 协议中定义的行为。主题对象维护了一个观察者数组，用于保存所有的观察者，当主题对象状态发生变化时，会遍历观察者数组并调用每个观察者的 <strong><code>update()</code></strong> 方法进行相应的更新操作。</p>
+<p>我们还定义了两个观察者 <strong><code>TextLengthObserver</code></strong> 和 <strong><code>UppercaseObserver</code><strong>，它们都实现了 <strong><code>Observer</code></strong> 协议中定义的行为。</strong><code>TextLengthObserver</code></strong> 用于在主题对象的文本发生变化时打印文本长度，**<code>UppercaseObserver</code>** 用于在主题对象的文本发生变化时打印大写字母。</p>
+<p>在最后的使用示例中，我们创建了一个文本编辑器主题对象 **<code>textEditor</code>**，并创建了两个观察者对象 <strong><code>lengthObserver</code></strong> 和 **<code>uppercaseObserver</code>**，并将它们注册到主题对象中。随后，我们通过 <strong><code>textEditor.setText(text:)</code></strong> 方法改变了主题对象的状态，从而触发了两个观察者的更新操作，最终输出了相应的结果。</p>
+<p>总的来说，观察者模式使得主题对象和观察者对象之间的耦合度更低，主题对象只需要维护一个观察者列表，并通知观察者对象即可。这种方式可以方便地添加、删除或修改观察者对象，而无需修改主题对象的代码。</p>
+<h3 id="4-迭代器模式（Iterator-Pattern）"><a href="#4-迭代器模式（Iterator-Pattern）" class="headerlink" title="4. 迭代器模式（Iterator Pattern）"></a>4. 迭代器模式（Iterator Pattern）</h3><p>迭代器模式是一种行为型设计模式，它允许我们按照特定的顺序遍历集合中的每个元素，而无需暴露集合的内部表示。该模式定义了一种迭代器接口，该接口提供了遍历集合的方法，而不需要了解集合的内部结构。</p>
+<p>迭代器模式的核心在于将集合和遍历分离开来。这样，我们就可以遍历一个聚合对象，而无需了解聚合对象的内部结构。这种分离有助于提高代码的可重用性，并使代码更易于维护。</p>
+<p>在 Swift 中，标准库已经提供了 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 两个协议，用于实现迭代器模式。如果需要遍历自定义类型的对象，我们可以让该类型实现 <strong><code>Sequence</code></strong> 协议，并在该协议中实现 <strong><code>makeIterator()</code></strong> 方法，返回一个符合 <strong><code>IteratorProtocol</code></strong> 协议的迭代器对象。</p>
+<p>下面是一个使用 Swift 标准库提供的协议实现迭代器模式的例子：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">MySequence</span>: <span class="hljs-title class_">Sequence</span> &#123;
+    <span class="hljs-keyword">let</span> values: [<span class="hljs-type">Int</span>]
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">makeIterator</span>() -&gt; <span class="hljs-type">IndexingIterator</span>&lt;[<span class="hljs-type">Int</span>]&gt; &#123;
+        <span class="hljs-keyword">return</span> values.makeIterator()
+    &#125;
+&#125;
+
+<span class="hljs-keyword">let</span> sequence <span class="hljs-operator">=</span> <span class="hljs-type">MySequence</span>(values: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>])
+
+<span class="hljs-keyword">for</span> value <span class="hljs-keyword">in</span> sequence &#123;
+    <span class="hljs-built_in">print</span>(value)
+&#125;</code></pre></div>
+
+<p>在上面的代码中，我们定义了一个名为 <strong><code>MySequence</code></strong> 的结构体，实现了 <strong><code>Sequence</code></strong> 协议，并在其中实现了 <strong><code>makeIterator()</code></strong> 方法，返回了一个 <strong><code>IndexingIterator&lt;[Int]&gt;</code></strong> 类型的迭代器对象。</p>
+<p>接着，我们创建了一个 <strong><code>MySequence</code></strong> 对象，并使用 <strong><code>for...in</code></strong> 循环遍历了该对象中的所有元素，并输出了每个元素的值。</p>
+<p>需要注意的是，Swift 标准库中提供的 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 协议已经实现了很多迭代器模式的细节，因此在实现自定义类型的迭代器时，可以直接使用标准库提供的协议。</p>
+<p>Swift 标准库中实现 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 协议的原理是利用了 Swift 的生成器和闭包特性。</p>
+<p>在 Swift 中，生成器是一种特殊的函数，可以在需要时逐个返回值，而不是一次性返回所有值。生成器函数使用 <strong><code>yield</code></strong> 关键字来返回值，并且每次返回值时，函数的状态会被保存下来，以便下一次调用该函数时可以从上次离开的地方继续执行。</p>
+<p><strong><code>IteratorProtocol</code></strong> 协议定义了一个 <strong><code>next()</code></strong> 方法，用于返回序列中的下一个元素。在 Swift 标准库中，**<code>IteratorProtocol</code>** 协议通常由生成器函数来实现，也就是说，**<code>next()</code>** 方法的实现使用了生成器函数的特性，可以在需要时逐个返回序列中的元素，并且在返回元素时保存状态，以便下一次调用 <strong><code>next()</code></strong> 方法时可以从上次离开的地方继续执行。</p>
+<p><strong><code>Sequence</code></strong> 协议定义了一个 <strong><code>makeIterator()</code></strong> 方法，用于返回符合 <strong><code>IteratorProtocol</code></strong> 协议的迭代器对象。在 Swift 标准库中，**<code>Sequence</code>** 协议通常由数组、字典、集合等数据结构来实现。当一个序列对象调用 <strong><code>makeIterator()</code></strong> 方法时，该方法会返回一个符合 <strong><code>IteratorProtocol</code></strong> 协议的迭代器对象，该迭代器对象实际上就是由序列对象中的生成器函数来实现的。</p>
+<p>以下是 Swift 标准库中 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 协议的部分实现代码：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">public</span> <span class="hljs-keyword">protocol</span> <span class="hljs-title class_">IteratorProtocol</span> &#123;
+    <span class="hljs-keyword">associatedtype</span> <span class="hljs-type">Element</span>
+
+    <span class="hljs-keyword">mutating</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">next</span>() -&gt; <span class="hljs-type">Element</span>?
+&#125;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Sequence</span> &#123;
+    <span class="hljs-keyword">associatedtype</span> <span class="hljs-type">Iterator</span>: <span class="hljs-type">IteratorProtocol</span>
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">makeIterator</span>() -&gt; <span class="hljs-type">Iterator</span>
+&#125;
+
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">struct</span> <span class="hljs-title class_">IndexingIterator</span>&lt;<span class="hljs-title class_">C</span>: <span class="hljs-title class_">Collection</span>&gt;: <span class="hljs-title class_">IteratorProtocol</span> &#123;
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">mutating</span> <span class="hljs-keyword">func</span> <span class="hljs-title function_">next</span>() -&gt; <span class="hljs-type">C</span>.<span class="hljs-type">Element</span>? &#123;
+        <span class="hljs-keyword">if</span> _position <span class="hljs-operator">==</span> _elements.endIndex &#123;
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>
+        &#125;
+        _elements.formIndex(after: <span class="hljs-operator">&amp;</span>_position)
+        <span class="hljs-keyword">return</span> _elements[_position]
+    &#125;
+    <span class="hljs-keyword">var</span> _elements: <span class="hljs-type">C</span>
+    <span class="hljs-keyword">var</span> _position: <span class="hljs-type">C</span>.<span class="hljs-type">Index</span>
+&#125;
+
+<span class="hljs-keyword">extension</span> <span class="hljs-title class_">Collection</span> &#123;
+    <span class="hljs-keyword">public</span> __consuming <span class="hljs-keyword">func</span> <span class="hljs-title function_">makeIterator</span>() -&gt; <span class="hljs-type">IndexingIterator</span>&lt;<span class="hljs-keyword">Self</span>&gt; &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">IndexingIterator</span>(_elements: <span class="hljs-keyword">self</span>, _position: startIndex)
+    &#125;
+&#125;</code></pre></div>
+
+<p>在上面的代码中，**<code>IteratorProtocol</code>** 协议定义了一个 <strong><code>next()</code></strong> 方法，返回一个关联类型 <strong><code>Element</code><strong>。</strong><code>Sequence</code></strong> 协议定义了一个关联类型 <strong><code>Iterator</code><strong>，并且定义了一个 <strong><code>makeIterator()</code></strong> 方法，返回一个符合 <strong><code>IteratorProtocol</code></strong> 协议的迭代器对象。</strong><code>IndexingIterator</code></strong> 结构体实现了 <strong><code>IteratorProtocol</code></strong> 协议，并使用泛型参数 <strong><code>C</code></strong> 限定了 <strong><code>next()</code></strong> 方法返回值的类型。在 <strong><code>IndexingIterator</code></strong> 结构体中，**<code>next()</code>** 方法的实现使用了 Swift 的集合（Collection）特性，可以逐个返回集合中的元素。在 <strong><code>Collection</code></strong> 扩展中，**<code>makeIterator()</code>** 方法的实现返回了一个 <strong><code>IndexingIterator</code></strong> 类型的迭代器对象。</p>
+<p>总的来说，Swift 标准库中实现 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 协议的原理是利用了 Swift 的生成器和闭包特性。生成器函数可以逐个返回序列中的元素，并在返回元素时保存状态，以便下一次调用 <strong><code>next()</code></strong> 方法时可以从上次离开的地方继续执行。序列对象调用 <strong><code>makeIterator()</code></strong> 方法时，该方法会返回一个符合 <strong><code>IteratorProtocol</code></strong> 协议的迭代器对象，该迭代器对象实际上就是由序列对象中的生成器函数来实现的。</p>
+<p>由于 Swift 的生成器函数和闭包特性，实现迭代器非常简单，而且非常灵活。开发者可以根据自己的需求来编写生成器函数，实现自定义的迭代器。同时，Swift 标准库中提供了很多符合 <strong><code>IteratorProtocol</code></strong> 和 <strong><code>Sequence</code></strong> 协议的数据结构，如数组、字典、集合等，可以直接使用这些数据结构提供的迭代器，方便开发者的编程工作。</p>
+<h3 id="5-职责链模式（Chain-of-Responsibility-Pattern）"><a href="#5-职责链模式（Chain-of-Responsibility-Pattern）" class="headerlink" title="5. 职责链模式（Chain of Responsibility Pattern）"></a>5. 职责链模式（Chain of Responsibility Pattern）</h3><p>职责链模式（Chain of Responsibility Pattern）是一种行为型设计模式，它将多个对象组成一条链，依次处理某个请求，直到请求被处理完成为止。</p>
+<p>职责链模式常用于处理多个对象之间的协作关系，例如在一个复杂的系统中，需要处理多种请求，每种请求都需要经过多个处理步骤才能最终得到处理结果。这时候，可以将这些处理步骤封装到不同的对象中，组成一条职责链，每个对象只负责处理自己能够处理的请求，并将请求传递给下一个对象，直到请求被处理完成为止。</p>
+<p>下面是一个使用 Swift 5 实现职责链模式的例子。假设有一个购买请求需要经过三个处理步骤才能最终得到处理结果，其中第一个处理步骤可以处理最低价格的购买请求，第二个处理步骤可以处理大于 100 元的购买请求，第三个处理步骤可以处理任意购买请求。</p>
+<p>首先，我们定义一个请求类型 **<code>PurchaseRequest</code>**，用于表示购买请求：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">PurchaseRequest</span> &#123;
+    <span class="hljs-keyword">let</span> amount: <span class="hljs-type">Double</span>
+&#125;</code></pre></div>
+
+<p>然后，我们定义一个抽象处理器 **<code>PurchaseHandler</code>**，用于表示购买请求处理器，该处理器包含一个指向下一个处理器的引用，并且提供一个处理请求的方法：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">protocol</span> <span class="hljs-title class_">PurchaseHandler</span> &#123;
+    <span class="hljs-keyword">var</span> nextHandler: <span class="hljs-type">PurchaseHandler</span>? &#123; <span class="hljs-keyword">get</span> <span class="hljs-keyword">set</span> &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">request</span>: <span class="hljs-type">PurchaseRequest</span>)
+&#125;</code></pre></div>
+
+<p>接下来，我们实现具体的处理器。首先是第一个处理步骤的处理器，用于处理最低价格的购买请求：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LowestPriceHandler</span>: <span class="hljs-title class_">PurchaseHandler</span> &#123;
+    <span class="hljs-keyword">var</span> nextHandler: <span class="hljs-type">PurchaseHandler</span>?
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">request</span>: <span class="hljs-type">PurchaseRequest</span>) &#123;
+        <span class="hljs-keyword">if</span> request.amount <span class="hljs-operator">&lt;=</span> <span class="hljs-number">10</span> &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;LowestPriceHandler: Purchase request for $<span class="hljs-subst">\(request.amount)</span> approved&quot;</span>)
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            nextHandler<span class="hljs-operator">?</span>.handle(request: request)
+        &#125;
+    &#125;
+&#125;</code></pre></div>
+
+<p>然后是第二个处理步骤的处理器，用于处理大于 100 元的购买请求：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">HighPriceHandler</span>: <span class="hljs-title class_">PurchaseHandler</span> &#123;
+    <span class="hljs-keyword">var</span> nextHandler: <span class="hljs-type">PurchaseHandler</span>?
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">request</span>: <span class="hljs-type">PurchaseRequest</span>) &#123;
+        <span class="hljs-keyword">if</span> request.amount <span class="hljs-operator">&gt;</span> <span class="hljs-number">100</span> &#123;
+            <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;HighPriceHandler: Purchase request for $<span class="hljs-subst">\(request.amount)</span> approved&quot;</span>)
+        &#125; <span class="hljs-keyword">else</span> &#123;
+            nextHandler<span class="hljs-operator">?</span>.handle(request: request)
+        &#125;
+    &#125;
+&#125;</code></pre></div>
+
+<p>最后是第三个处理步骤的处理器，用于处理任意购买请求：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">GeneralPriceHandler</span>: <span class="hljs-title class_">PurchaseHandler</span> &#123;
+    <span class="hljs-keyword">var</span> nextHandler: <span class="hljs-type">PurchaseHandler</span>?
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">request</span>: <span class="hljs-type">PurchaseRequest</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;GeneralPriceHandler: Purchase request for $<span class="hljs-subst">\(request.amount)</span> approved&quot;</span>)
+    &#125;
+&#125;</code></pre></div>
+
+<p>现在，我们可以将这三个处理器组成一条职责链：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> lowestPriceHandler <span class="hljs-operator">=</span> <span class="hljs-type">LowestPriceHandler</span>()
+<span class="hljs-keyword">let</span> highPriceHandler <span class="hljs-operator">=</span> <span class="hljs-type">HighPriceHandler</span>()
+<span class="hljs-keyword">let</span> generalPriceHandler <span class="hljs-operator">=</span> <span class="hljs-type">GeneralPriceHandler</span>()
+
+lowestPriceHandler.nextHandler <span class="hljs-operator">=</span> highPriceHandler
+highPriceHandler.nextHandler <span class="hljs-operator">=</span> generalPriceHandler</code></pre></div>
+
+<p>这样，当有一个购买请求时，我们只需要将其传递给第一个处理器即可：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> purchaseRequest <span class="hljs-operator">=</span> <span class="hljs-type">PurchaseRequest</span>(amount: <span class="hljs-number">5</span>)
+lowestPriceHandler.handle(request: purchaseRequest)
+
+<span class="hljs-keyword">let</span> purchaseRequest2 <span class="hljs-operator">=</span> <span class="hljs-type">PurchaseRequest</span>(amount: <span class="hljs-number">50</span>)
+lowestPriceHandler.handle(request: purchaseRequest2)
+
+<span class="hljs-keyword">let</span> purchaseRequest3 <span class="hljs-operator">=</span> <span class="hljs-type">PurchaseRequest</span>(amount: <span class="hljs-number">200</span>)
+lowestPriceHandler.handle(request: purchaseRequest3)</code></pre></div>
+
+<p>输出结果如下：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-type">LowestPriceHandler</span>: <span class="hljs-type">Purchase</span> request <span class="hljs-keyword">for</span> <span class="hljs-variable">$5</span>.<span class="hljs-number">0</span> approved
+<span class="hljs-type">LowestPriceHandler</span>: <span class="hljs-type">Purchase</span> request <span class="hljs-keyword">for</span> <span class="hljs-variable">$50</span>.<span class="hljs-number">0</span> approved
+<span class="hljs-type">HighPriceHandler</span>: <span class="hljs-type">Purchase</span> request <span class="hljs-keyword">for</span> <span class="hljs-variable">$200</span>.<span class="hljs-number">0</span> approved</code></pre></div>
+
+<p>可以看到，购买请求被依次传递给了职责链中的处理器，并且最终得到了处理结果。</p>
+<p>在这个例子中，职责链模式将多个处理步骤组合成一条链，使得每个处理步骤只需要关注自己能够处理的请求，而不需要关注整个处理过程，从而提高了代码的可扩展性和可维护性。</p>
+<h3 id="6-命令模式（Command-Pattern）"><a href="#6-命令模式（Command-Pattern）" class="headerlink" title="6. 命令模式（Command Pattern）"></a>6. 命令模式（Command Pattern）</h3><p>命令模式是一种行为设计模式，它将请求和接收者封装在独立的对象中，从而使你能够将请求参数化、将请求放入队列或记录请求日志，以及支持可撤销的操作。</p>
+<p>命令模式常用来解决在软件开发中，需要对一些对象进行一系列复杂的操作，或者需要在不同的时间对对象进行不同的操作。此时，我们可以将这些操作封装成不同的命令对象，使得操作可以灵活组合，易于扩展和维护。</p>
+<p>下面是一个使用 Swift 5 实现命令模式的简单示例，假设有一个家庭影院，我们需要对其进行一系列操作，包括打开灯光、打开投影仪、打开音响、调整音量等等：</p>
+<ul>
+<li><p>Swift Code</p>
+  <div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 接收者（Receiver）：家庭影院</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">HomeTheater</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOnLights</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lights are on&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOffLights</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Lights are off&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOnProjector</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Projector is on&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOffProjector</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Projector is off&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOnStereo</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Stereo is on&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">turnOffStereo</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Stereo is off&quot;</span>)
+    &#125;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setVolume</span>(<span class="hljs-params">volume</span>: <span class="hljs-type">Int</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Volume is set to <span class="hljs-subst">\(volume)</span>&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 命令（Command）：抽象类</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>()
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：打开灯光</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOnLightsCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        homeTheater.turnOnLights()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：关闭灯光</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOffLightsCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        homeTheater.turnOffLights()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：打开投影仪</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOnProjectorCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        homeTheater.turnOnProjector()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：关闭投影仪</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOffProjectorCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        homeTheater.turnOffProjector()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：打开音响</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOnStereoCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+		&#125;
+
+		<span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+				homeTheater.turnOnStereo()
+		&#125;
+&#125;
+
+<span class="hljs-comment">// 具体命令（ConcreteCommand）：关闭音响</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TurnOffStereoCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> homeTheater: <span class="hljs-type">HomeTheater</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">homeTheater</span>: <span class="hljs-type">HomeTheater</span>) &#123;
+        <span class="hljs-keyword">self</span>.homeTheater <span class="hljs-operator">=</span> homeTheater
+		&#125;
+
+		<span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+				homeTheater.turnOffStereo()
+		&#125;
+&#125;</code></pre></div></li>
+</ul>
+<p>当我们使用命令模式时，我们通常会实现一个命令接口来封装每个具体的命令，这个命令接口通常至少包括一个 <strong><code>execute()</code></strong> 方法来执行命令。</p>
+<p>下面是一个使用命令模式的示例，假设我们有一个简单的文本编辑器，用户可以执行一些基本的操作，例如打开文件、保存文件、撤销操作、重做操作等。我们可以使用命令模式来实现这些操作：</p>
+<p>首先，我们定义一个 <strong><code>Command</code></strong> 接口，用于封装所有的命令：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>()
+&#125;</code></pre></div>
+
+<p>然后，我们定义几个具体的命令，例如 <strong><code>OpenFileCommand</code><strong>、</strong><code>SaveFileCommand</code><strong>、</strong><code>UndoCommand</code></strong> 和 **<code>RedoCommand</code>**：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">OpenFileCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;执行打开文件操作&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SaveFileCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;执行保存文件操作&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">UndoCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;执行撤销操作&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">RedoCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;执行重做操作&quot;</span>)
+    &#125;
+&#125;</code></pre></div>
+
+<p>现在我们可以将这些命令封装到一个文本编辑器中：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">TextEditor</span> &#123;
+    <span class="hljs-keyword">var</span> openFileCommand: <span class="hljs-type">Command</span>
+    <span class="hljs-keyword">var</span> saveFileCommand: <span class="hljs-type">Command</span>
+    <span class="hljs-keyword">var</span> undoCommand: <span class="hljs-type">Command</span>
+    <span class="hljs-keyword">var</span> redoCommand: <span class="hljs-type">Command</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">openFileCommand</span>: <span class="hljs-type">Command</span>, <span class="hljs-params">saveFileCommand</span>: <span class="hljs-type">Command</span>, <span class="hljs-params">undoCommand</span>: <span class="hljs-type">Command</span>, <span class="hljs-params">redoCommand</span>: <span class="hljs-type">Command</span>) &#123;
+        <span class="hljs-keyword">self</span>.openFileCommand <span class="hljs-operator">=</span> openFileCommand
+        <span class="hljs-keyword">self</span>.saveFileCommand <span class="hljs-operator">=</span> saveFileCommand
+        <span class="hljs-keyword">self</span>.undoCommand <span class="hljs-operator">=</span> undoCommand
+        <span class="hljs-keyword">self</span>.redoCommand <span class="hljs-operator">=</span> redoCommand
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">openFile</span>() &#123;
+        openFileCommand.execute()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">saveFile</span>() &#123;
+        saveFileCommand.execute()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">undo</span>() &#123;
+        undoCommand.execute()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">redo</span>() &#123;
+        redoCommand.execute()
+    &#125;
+&#125;</code></pre></div>
+
+<p>现在我们可以使用命令模式来执行这些操作。首先，我们实例化每个具体的命令：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> openFileCommand <span class="hljs-operator">=</span> <span class="hljs-type">OpenFileCommand</span>()
+<span class="hljs-keyword">let</span> saveFileCommand <span class="hljs-operator">=</span> <span class="hljs-type">SaveFileCommand</span>()
+<span class="hljs-keyword">let</span> undoCommand <span class="hljs-operator">=</span> <span class="hljs-type">UndoCommand</span>()
+<span class="hljs-keyword">let</span> redoCommand <span class="hljs-operator">=</span> <span class="hljs-type">RedoCommand</span>()</code></pre></div>
+
+<p>然后，我们可以将这些命令传递给一个文本编辑器实例：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> textEditor <span class="hljs-operator">=</span> <span class="hljs-type">TextEditor</span>(openFileCommand: openFileCommand, saveFileCommand: saveFileCommand, undoCommand: undoCommand, redoCommand: redoCommand)</code></pre></div>
+
+<p>现在，我们可以调用文本编辑器的方法来执行这些操作：</p>
+<div class="code-wrapper"><pre><code class="hljs swift">textEditor.openFile()  <span class="hljs-comment">// 输出：执行打开文件操作</span>
+textEditor.saveFile()  <span class="hljs-comment">// 输出：执行保存文件操作</span>
+textEditor.undo()      <span class="hljs-comment">// 输出：执行撤销操作</span>
+textEditor.redo()      <span class="hljs-comment">// 输出：执行重做操作</span></code></pre></div>
+
+<p>在上面的示例中，我们使用命令模式来封装每个操作，并将它们传递给一个文本编辑器实例。这样，我们可以轻松地添加、修改或删除命令，而不需要修改文本编辑</p>
+<p>当调用 <strong><code>execute()</code></strong> 方法时，会调用 <strong><code>receiver</code></strong> 对象的相应方法完成具体的操作。同时，可以通过 <strong><code>undo()</code></strong> 方法实现撤销操作，即撤销 <strong><code>receiver</code></strong> 对象的相应方法的操作。</p>
+<p>下面是一个简单的示例，使用命令模式来实现一个遥控器控制灯的开关。首先，我们定义一个 <strong><code>Light</code></strong> 类来表示灯，并提供开灯和关灯的方法：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Light</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">on</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Light is on&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">off</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Light is off&quot;</span>)
+    &#125;
+&#125;</code></pre></div>
+
+<p>然后，我们定义一个 <strong><code>Command</code></strong> 协议来表示命令：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>()
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">undo</span>()
+&#125;</code></pre></div>
+
+<p>接下来，我们实现具体的命令类，这里有开灯命令和关灯命令：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LightOnCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> light: <span class="hljs-type">Light</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">light</span>: <span class="hljs-type">Light</span>) &#123;
+        <span class="hljs-keyword">self</span>.light <span class="hljs-operator">=</span> light
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        light.on()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">undo</span>() &#123;
+        light.off()
+    &#125;
+&#125;
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">LightOffCommand</span>: <span class="hljs-title class_">Command</span> &#123;
+    <span class="hljs-keyword">let</span> light: <span class="hljs-type">Light</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">light</span>: <span class="hljs-type">Light</span>) &#123;
+        <span class="hljs-keyword">self</span>.light <span class="hljs-operator">=</span> light
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">execute</span>() &#123;
+        light.off()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">undo</span>() &#123;
+        light.on()
+    &#125;
+&#125;</code></pre></div>
+
+<p>在这里，**<code>LightOnCommand</code>** 和 <strong><code>LightOffCommand</code></strong> 分别实现了 <strong><code>Command</code></strong> 协议，并在 <strong><code>execute()</code></strong> 和 <strong><code>undo()</code></strong> 方法中分别调用了 <strong><code>Light</code></strong> 对象的开灯和关灯方法。</p>
+<p>接下来，我们定义遥控器类，它有四个插槽，每个插槽都可以存放一个命令：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">RemoteControl</span> &#123;
+    <span class="hljs-keyword">var</span> onCommands: [<span class="hljs-type">Command</span>] <span class="hljs-operator">=</span> []
+    <span class="hljs-keyword">var</span> offCommands: [<span class="hljs-type">Command</span>] <span class="hljs-operator">=</span> []
+
+    <span class="hljs-keyword">init</span>() &#123;
+        <span class="hljs-keyword">let</span> noCommand <span class="hljs-operator">=</span> <span class="hljs-type">NoCommand</span>()
+        <span class="hljs-keyword">for</span> <span class="hljs-keyword">_</span> <span class="hljs-keyword">in</span> <span class="hljs-number">0</span><span class="hljs-operator">..&lt;</span><span class="hljs-number">4</span> &#123;
+            onCommands.append(noCommand)
+            offCommands.append(noCommand)
+        &#125;
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setCommand</span>(<span class="hljs-params">slot</span>: <span class="hljs-type">Int</span>, <span class="hljs-params">onCommand</span>: <span class="hljs-type">Command</span>, <span class="hljs-params">offCommand</span>: <span class="hljs-type">Command</span>) &#123;
+        onCommands[slot] <span class="hljs-operator">=</span> onCommand
+        offCommands[slot] <span class="hljs-operator">=</span> offCommand
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">pressOnButton</span>(<span class="hljs-params">slot</span>: <span class="hljs-type">Int</span>) &#123;
+        onCommands[slot].execute()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">pressOffButton</span>(<span class="hljs-params">slot</span>: <span class="hljs-type">Int</span>) &#123;
+        offCommands[slot].execute()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">pressUndoButton</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Undo button pressed&quot;</span>)
+    &#125;
+&#125;</code></pre></div>
+
+<p>在这里，我们使用 <strong><code>NoCommand</code></strong> 类来初始化所有插槽。**<code>setCommand()</code>** 方法用于设置插槽中的命令，**<code>pressOnButton()</code>** 和 <strong><code>pressOffButton()</code></strong> 方法分别用于按下开灯和关灯按钮，**<code>pressUndoButton()</code>** 方法用于实现撤销操作，这里先简单地输出一个信息。</p>
+<p>最后，我们可以测试遥控器了：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> remoteControl <span class="hljs-operator">=</span> <span class="hljs-type">RemoteControl</span>()
+
+<span class="hljs-keyword">let</span> livingRoomLight <span class="hljs-operator">=</span> <span class="hljs-type">Light</span>()
+<span class="hljs-keyword">let</span> livingRoomLightOnCommand <span class="hljs-operator">=</span> <span class="hljs-type">LightOnCommand</span>(light: livingRoomLight)
+<span class="hljs-keyword">let</span> livingRoomLightOffCommand <span class="hljs-operator">=</span> <span class="hljs-type">LightOffCommand</span>(light: livingRoomLight)
+
+remoteControl.setCommand(slot: <span class="hljs-number">0</span>, onCommand: livingRoomLightOnCommand, offCommand:livingRoomLightOffCommand)
+remoteControl.pressOnButton(slot:<span class="hljs-number">0</span>)
+remoteControl.pressOffButton(slot:<span class="hljs-number">0</span>)</code></pre></div>
+
+<p>在上面的实现中，我们创建了三个具体命令 <strong><code>LightOnCommand</code><strong>、</strong><code>LightOffCommand</code></strong> 和 **<code>StereoOnWithCDCommand</code>**。每个命令对象都持有了一个接收者对象，并实现了 <strong><code>Command</code></strong> 协议的 <strong><code>execute</code></strong> 方法。这个 <strong><code>execute</code></strong> 方法会调用接收者的相关方法来实现具体的命令操作。</p>
+<p>我们还创建了一个遥控器对象 **<code>RemoteControl</code>**，这个遥控器对象持有了一系列的命令对象。通过 <strong><code>setCommand</code></strong> 方法，我们可以给遥控器设置不同的命令，同时通过 <strong><code>buttonWasPressed</code></strong> 方法，我们可以执行遥控器当前所持有的命令对象。</p>
+<p>这样，在实际的应用场景中，我们可以通过遥控器对象将具体的命令对象和执行命令的对象进行解耦，从而实现更加灵活的命令操作。</p>
+<h3 id="7-备忘录模式（Memento-Pattern）"><a href="#7-备忘录模式（Memento-Pattern）" class="headerlink" title="7. 备忘录模式（Memento Pattern）"></a>7. 备忘录模式（Memento Pattern）</h3><p>备忘录模式（Memento Pattern）是一种行为设计模式，它允许将对象的状态保存到备忘录中，并在需要时将其还原到先前的状态。备忘录模式的核心思想是提供一个快照对象，用于保存一个对象的内部状态，并将该对象恢复到该状态。</p>
+<p>备忘录模式通常用于以下两种情况中：</p>
+<ol>
+<li>当需要保存和恢复对象状态以进行撤销、重做或历史记录时。</li>
+<li>当直接访问对象的成员变量可能违反封装原则时，备忘录模式可以提供一个间接的访问方式。</li>
+</ol>
+<p>下面是使用 Swift 5 实现备忘录模式的一个例子：</p>
+<p>首先，我们定义一个备忘录类，用于保存需要恢复的对象的状态。</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Memento</span> &#123;
+    <span class="hljs-keyword">let</span> state: <span class="hljs-type">String</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">state</span>: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.state <span class="hljs-operator">=</span> state
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getState</span>() -&gt; <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> state
+    &#125;
+&#125;</code></pre></div>
+
+<p>接下来，我们定义一个原始对象类，该类拥有一个状态变量，并且可以将其状态保存到备忘录中。</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Originator</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> state: <span class="hljs-type">String</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">state</span>: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.state <span class="hljs-operator">=</span> state
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setState</span>(<span class="hljs-params">state</span>: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.state <span class="hljs-operator">=</span> state
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">saveStateToMemento</span>() -&gt; <span class="hljs-type">Memento</span> &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-type">Memento</span>(state: state)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getStateFromMemento</span>(<span class="hljs-params">memento</span>: <span class="hljs-type">Memento</span>) &#123;
+        state <span class="hljs-operator">=</span> memento.getState()
+    &#125;
+&#125;</code></pre></div>
+
+<p>最后，我们定义一个管理器类，该类用于保存备忘录列表并提供对它们的访问。</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">class</span> <span class="hljs-title class_">CareTaker</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> mementoList: [<span class="hljs-type">Memento</span>] <span class="hljs-operator">=</span> []
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">addMemento</span>(<span class="hljs-params">memento</span>: <span class="hljs-type">Memento</span>) &#123;
+        mementoList.append(memento)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getMemento</span>(<span class="hljs-params">index</span>: <span class="hljs-type">Int</span>) -&gt; <span class="hljs-type">Memento</span> &#123;
+        <span class="hljs-keyword">return</span> mementoList[index]
+    &#125;
+&#125;</code></pre></div>
+
+<p>下面是一个简单的使用备忘录模式的示例，其中我们将对象状态保存到备忘录中，并在需要时将其还原。</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 创建一个原始对象</span>
+<span class="hljs-keyword">var</span> originator <span class="hljs-operator">=</span> <span class="hljs-type">Originator</span>(state: <span class="hljs-string">&quot;State1&quot;</span>)
+
+<span class="hljs-comment">// 创建一个管理器对象</span>
+<span class="hljs-keyword">var</span> careTaker <span class="hljs-operator">=</span> <span class="hljs-type">CareTaker</span>()
+
+<span class="hljs-comment">// 将原始对象的状态保存到备忘录中</span>
+careTaker.addMemento(memento: originator.saveStateToMemento())
+
+<span class="hljs-comment">// 修改原始对象的状态</span>
+originator.setState(state: <span class="hljs-string">&quot;State2&quot;</span>)
+
+<span class="hljs-comment">// 从备忘录中恢复原始对象的状态</span>
+originator.getStateFromMemento(memento: careTaker.getMemento(index: <span class="hljs-number">0</span>))
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Current State: <span class="hljs-subst">\(originator.getState())</span>&quot;</span>) <span class="hljs-comment">// 输出 &quot;Current State: State1&quot;</span></code></pre></div>
+
+<p>在这个例子中，我们使用备忘录模式将原始对象的状态保存到备忘录中，并在需要时将其还原。这样，我们就可以轻松地实现撤销、重做或历史记录等功能。</p>
+<h3 id="8-状态模式（State-Pattern）"><a href="#8-状态模式（State-Pattern）" class="headerlink" title="8. 状态模式（State Pattern）"></a>8. 状态模式（State Pattern）</h3><p>状态模式（State Pattern）是一种行为型设计模式，它允许一个对象在其内部状态改变时改变其行为。该模式主要解决对象状态转换的问题，使得在状态发生改变时，对象可以自动改变行为。</p>
+<p>状态模式包含三个主要角色：上下文（Context）、抽象状态（State）和具体状态（Concrete State）。上下文负责维护状态，并将请求转发给当前状态对象，而抽象状态定义一个接口，用于表示状态，并在状态发生改变时通知上下文，具体状态则实现抽象状态定义的接口，并处理上下文发来的请求。</p>
+<p>使用状态模式可以使代码更加可维护和可扩展，因为状态转换的逻辑被封装在状态类中，而不是分散在上下文中，从而使得状态类可以独立变化而不会影响到上下文。</p>
+<p>下面是一个使用 Swift 5 实现状态模式的示例代码：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 定义抽象状态</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">State</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">context</span>: <span class="hljs-type">Context</span>)
+&#125;
+
+<span class="hljs-comment">// 定义具体状态 A</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteStateA</span>: <span class="hljs-title class_">State</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">context</span>: <span class="hljs-type">Context</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;当前状态是 A&quot;</span>)
+        context.setState(state: <span class="hljs-type">ConcreteStateB</span>())
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 定义具体状态 B</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteStateB</span>: <span class="hljs-title class_">State</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">handle</span>(<span class="hljs-params">context</span>: <span class="hljs-type">Context</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;当前状态是 B&quot;</span>)
+        context.setState(state: <span class="hljs-type">ConcreteStateA</span>())
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 定义上下文</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Context</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> state: <span class="hljs-type">State</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">state</span>: <span class="hljs-type">State</span>) &#123;
+        <span class="hljs-keyword">self</span>.state <span class="hljs-operator">=</span> state
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setState</span>(<span class="hljs-params">state</span>: <span class="hljs-type">State</span>) &#123;
+        <span class="hljs-keyword">self</span>.state <span class="hljs-operator">=</span> state
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">request</span>() &#123;
+        state.handle(context: <span class="hljs-keyword">self</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 测试代码</span>
+<span class="hljs-keyword">let</span> context <span class="hljs-operator">=</span> <span class="hljs-type">Context</span>(state: <span class="hljs-type">ConcreteStateA</span>())
+context.request()
+context.request()
+context.request()</code></pre></div>
+
+<p>在上面的代码中，抽象状态被定义为 <strong><code>State</code></strong> 协议，其中包含一个 <strong><code>handle</code></strong> 方法用于处理请求并改变上下文状态。具体状态 <strong><code>ConcreteStateA</code></strong> 和 <strong><code>ConcreteStateB</code></strong> 实现了 <strong><code>State</code></strong> 协议，并分别处理不同的请求，并将上下文状态设置为另一个具体状态。上下文类 <strong><code>Context</code></strong> 维护当前状态并将请求转发给当前状态来处理。最后，在测试代码中，上下文被初始化为 **<code>ConcreteStateA</code>**，并连续进行了三次请求，每次请求后状态都会发生改变。</p>
+<h3 id="9-访问者模式（Visitor-Pattern）"><a href="#9-访问者模式（Visitor-Pattern）" class="headerlink" title="9. 访问者模式（Visitor Pattern）"></a>9. 访问者模式（Visitor Pattern）</h3><p>访问者模式（Visitor Pattern）是一种行为型设计模式，用于将算法与对象结构分离。该模式将算法定义在访问者中，让访问者能够访问并处理对象结构中的各个元素，而不需要修改这些元素的类定义。因此，该模式可以使得算法与对象结构相互独立，并且可以轻松添加新的算法而不会影响对象结构。</p>
+<p>访问者模式包含四个主要角色：访问者（Visitor）、具体访问者（Concrete Visitor）、元素（Element）和具体元素（Concrete Element）。访问者定义了访问元素的方法，具体访问者实现了访问方法，并包含了针对不同元素的具体算法，元素定义了接受访问者访问的方法，具体元素实现了元素的特定行为，并在接受访问者访问时调用访问者的方法。</p>
+<p>使用访问者模式可以将算法与对象结构分离，从而使得算法可以更容易地扩展和变化，并且可以方便地添加新的算法，而不需要修改对象结构。访问者模式通常用于解决对象结构比较稳定，但是需要频繁变化的算法的问题。</p>
+<p>下面是一个使用 Swift 5 实现访问者模式的示例代码：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 定义元素接口</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Element</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">accept</span>(<span class="hljs-params">visitor</span>: <span class="hljs-type">Visitor</span>)
+&#125;
+
+<span class="hljs-comment">// 定义具体元素 A</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteElementA</span>: <span class="hljs-title class_">Element</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">accept</span>(<span class="hljs-params">visitor</span>: <span class="hljs-type">Visitor</span>) &#123;
+        visitor.visit(element: <span class="hljs-keyword">self</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">operationA</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ConcreteElementA operationA&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 定义具体元素 B</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteElementB</span>: <span class="hljs-title class_">Element</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">accept</span>(<span class="hljs-params">visitor</span>: <span class="hljs-type">Visitor</span>) &#123;
+        visitor.visit(element: <span class="hljs-keyword">self</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">operationB</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ConcreteElementB operationB&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 定义访问者接口</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Visitor</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementA</span>)
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementB</span>)
+&#125;
+
+<span class="hljs-comment">// 定义具体访问者 A</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteVisitorA</span>: <span class="hljs-title class_">Visitor</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementA</span>) &#123;
+        element.operationA()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementB</span>) &#123;
+        element.operationB()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 定义具体访问者 B</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">ConcreteVisitorB</span>: <span class="hljs-title class_">Visitor</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementA</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ConcreteVisitorB visit ConcreteElementA&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">visit</span>(<span class="hljs-params">element</span>: <span class="hljs-type">ConcreteElementB</span>) &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;ConcreteVisitorB visit ConcreteElementB&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 测试代码</span>
+<span class="hljs-keyword">let</span> elements: [<span class="hljs-type">Element</span>] <span class="hljs-operator">=</span> [<span class="hljs-type">ConcreteElementA</span>(), <span class="hljs-type">ConcreteElementB</span>()]
+<span class="hljs-keyword">let</span> visitorA <span class="hljs-operator">=</span> <span class="hljs-type">ConcreteVisitorA</span>()
+<span class="hljs-keyword">let</span> visitorB <span class="hljs-operator">=</span> <span class="hljs-type">ConcreteVisitorB</span>()
+
+<span class="hljs-keyword">for</span> element <span class="hljs-keyword">in</span> elements &#123;
+    element.accept(visitor: visitorA)
+    element.accept(visitor: visitorB)
+&#125;</code></pre></div>
+
+<p>在上面的代码中，元素被定义为 <strong><code>Element</code></strong> 协议，其中包含一个接受访问者访问方法。具体元素 <strong><code>ConcreteElementA</code></strong> 和 <strong><code>ConcreteElementB</code></strong> 实现了 <strong><code>Element</code></strong> 接口，并在接受访问者访问时调用访问者的访问方法。</p>
+<p>访问者被定义为 <strong><code>Visitor</code></strong> 接口，其中包含针对具体元素的访问方法。具体访问者 <strong><code>ConcreteVisitorA</code></strong> 和 <strong><code>ConcreteVisitorB</code></strong> 实现了 <strong><code>Visitor</code></strong> 接口，并分别实现了访问具体元素的具体算法。</p>
+<p>在测试代码中，创建了两个具体访问者 <strong><code>visitorA</code></strong> 和 **<code>visitorB</code>**，以及两个元素 <strong><code>ConcreteElementA</code></strong> 和 **<code>ConcreteElementB</code>**。遍历元素数组，分别调用元素的 <strong><code>accept</code></strong> 方法，接受访问者的访问。在访问过程中，具体元素会调用访问者的访问方法，从而实现了算法与对象结构的分离。</p>
+<p>总的来说，访问者模式可以让算法与对象结构相互独立，并且可以轻松添加新的算法而不会影响对象结构。该模式通常用于解决对象结构比较稳定，但是需要频繁变化的算法的问题。</p>
+<h3 id="10-中介者模式（Mediator-Pattern）"><a href="#10-中介者模式（Mediator-Pattern）" class="headerlink" title="10. 中介者模式（Mediator Pattern）"></a>10. 中介者模式（Mediator Pattern）</h3><p>中介者模式是一种行为型设计模式，它可以通过将对象之间的通信转移给一个中介者对象来降低对象之间的耦合度。中介者模式有时也被称为调停者模式，因为中介者在协调对象之间的交互时，就像一个调停者一样。</p>
+<p>中介者模式通常用于以下场景：</p>
+<ul>
+<li>当一个对象需要与许多其他对象进行通信时，如果这些对象之间的交互非常复杂，那么每个对象都需要了解所有其他对象的细节，这会导致非常复杂和难以维护的代码。使用中介者模式可以将这些交互转移到中介者对象中，从而简化每个对象的职责。</li>
+<li>当多个对象之间的交互会导致复杂的循环依赖关系时，使用中介者模式可以打破这些循环依赖，从而使代码更加可维护和可扩展。</li>
+<li>当一个对象的改变需要通知其他对象时，如果每个对象都需要了解其他对象的细节，那么这种通知机制也会变得非常复杂。使用中介者模式可以将这种通知机制转移到中介者对象中，从而简化代码。</li>
+</ul>
+<p>下面是一个简单的 Swift 5 代码示例，演示了如何使用中介者模式协调多个组件之间的交互。假设我们有一个窗口组件（Window）、一个按钮组件（Button）和一个文本框组件（TextBox），它们都需要与彼此交互。我们可以创建一个中介者对象（Mediator）来协调它们之间的交互，如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 中介者</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Mediator</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> window: <span class="hljs-type">Window</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> button: <span class="hljs-type">Button</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> textBox: <span class="hljs-type">TextBox</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">window</span>: <span class="hljs-type">Window</span>, <span class="hljs-params">button</span>: <span class="hljs-type">Button</span>, <span class="hljs-params">textBox</span>: <span class="hljs-type">TextBox</span>) &#123;
+        <span class="hljs-keyword">self</span>.window <span class="hljs-operator">=</span> window
+        <span class="hljs-keyword">self</span>.button <span class="hljs-operator">=</span> button
+        <span class="hljs-keyword">self</span>.textBox <span class="hljs-operator">=</span> textBox
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">buttonClicked</span>() &#123;
+        textBox.setText(<span class="hljs-string">&quot;Button clicked&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">textBoxChanged</span>() &#123;
+        <span class="hljs-keyword">if</span> textBox.getText() <span class="hljs-operator">==</span> <span class="hljs-string">&quot;open&quot;</span> &#123;
+            window.open()
+        &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> textBox.getText() <span class="hljs-operator">==</span> <span class="hljs-string">&quot;close&quot;</span> &#123;
+            window.close()
+        &#125;
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 窗口组件</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Window</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">open</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Window opened&quot;</span>)
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">close</span>() &#123;
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;Window closed&quot;</span>)
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 按钮组件</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Button</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> mediator: <span class="hljs-type">Mediator</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">mediator</span>: <span class="hljs-type">Mediator</span>) &#123;
+        <span class="hljs-keyword">self</span>.mediator <span class="hljs-operator">=</span> mediator
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">click</span>() &#123;
+        mediator.buttonClicked()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 文本框组件</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">TextBox</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> mediator: <span class="hljs-type">Mediator</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> text: <span class="hljs-type">String</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;&quot;</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">mediator</span>: <span class="hljs-type">Mediator</span>) &#123;
+        <span class="hljs-keyword">self</span>.mediator <span class="hljs-operator">=</span> mediator
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">setText</span>(<span class="hljs-keyword">_</span> <span class="hljs-params">text</span>: <span class="hljs-type">String</span>) &#123;
+        <span class="hljs-keyword">self</span>.text <span class="hljs-operator">=</span> text
+        mediator.textBoxChanged()
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">getText</span>() -&gt; <span class="hljs-type">String</span> &#123;
+        <span class="hljs-keyword">return</span> text
+    &#125;
+&#125;</code></pre></div>
+
+<p>在这个例子中，中介者对象包含对窗口、按钮和文本框对象的引用。当按钮被点击时，它会调用中介者对象的 <strong><code>buttonClicked()</code></strong> 方法，中介者对象在收到这个消息后会将文本框的文本设置为“Button clicked”。当文本框的文本改变时，它会调用中介者对象的 <strong><code>textBoxChanged()</code></strong> 方法，中介者对象根据文本框的内容来打开或关闭窗口。</p>
+<p>按钮和文本框对象都包含对中介者对象的引用。当按钮被点击时，它会调用中介者对象的 <strong><code>buttonClicked()</code></strong> 方法，从而触发文本框的文本改变。当文本框的文本改变时，它会调用中介者对象的 <strong><code>textBoxChanged()</code></strong> 方法，从而打开或关闭窗口。</p>
+<p>这个例子演示了如何使用中介者模式来协调多个组件之间的交互，从而降低它们之间的耦合度。中介者模式可以帮助我们编写更加模块化、可维护和可扩展的代码。</p>
+<h3 id="11-解释器模式（Interpreter-Pattern）"><a href="#11-解释器模式（Interpreter-Pattern）" class="headerlink" title="11. 解释器模式（Interpreter Pattern）"></a>11. 解释器模式（Interpreter Pattern）</h3><p>解释器模式是一种行为型设计模式，它定义了一种语言，用于表示特定问题领域的语法规则，并提供了一种方式来解释这种语言中的语句。通过使用解释器模式，我们可以将一个问题转换为一个表达式，然后使用这个表达式来解决问题。</p>
+<p>解释器模式通常用于以下场景：</p>
+<ul>
+<li>当我们需要解决某个特定领域的问题时，比如数学、逻辑、日期等，可以使用解释器模式来定义这个领域的语法规则，并提供一种方式来解释这些规则。</li>
+<li>当我们需要实现一种简单的语言解释器时，可以使用解释器模式来定义这个语言的语法规则，并提供一种方式来解释这些规则。</li>
+<li>当我们需要根据特定的规则生成表达式时，可以使用解释器模式来实现这个功能。</li>
+</ul>
+<p>下面是一个简单的 Swift 5 代码示例，演示了如何使用解释器模式来解释简单的数学表达式。假设我们有一些简单的数学表达式，比如“1 + 2 + 3”，“1 - 2 + 3”等，我们可以定义一个解释器对象（Interpreter），来解释这些表达式，如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-comment">// 解释器</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Interpreter</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> expression: <span class="hljs-type">Expression</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">expression</span>: <span class="hljs-type">Expression</span>) &#123;
+        <span class="hljs-keyword">self</span>.expression <span class="hljs-operator">=</span> expression
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">interpret</span>() -&gt; <span class="hljs-type">Int</span> &#123;
+        <span class="hljs-keyword">return</span> expression.interpret()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 表达式</span>
+<span class="hljs-keyword">protocol</span> <span class="hljs-title class_">Expression</span> &#123;
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">interpret</span>() -&gt; <span class="hljs-type">Int</span>
+&#125;
+
+<span class="hljs-comment">// 数字表达式</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">NumberExpression</span>: <span class="hljs-title class_">Expression</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> value: <span class="hljs-type">Int</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">value</span>: <span class="hljs-type">Int</span>) &#123;
+        <span class="hljs-keyword">self</span>.value <span class="hljs-operator">=</span> value
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">interpret</span>() -&gt; <span class="hljs-type">Int</span> &#123;
+        <span class="hljs-keyword">return</span> value
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 加法表达式</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">AddExpression</span>: <span class="hljs-title class_">Expression</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> leftExpression: <span class="hljs-type">Expression</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> rightExpression: <span class="hljs-type">Expression</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">leftExpression</span>: <span class="hljs-type">Expression</span>, <span class="hljs-params">rightExpression</span>: <span class="hljs-type">Expression</span>) &#123;
+        <span class="hljs-keyword">self</span>.leftExpression <span class="hljs-operator">=</span> leftExpression
+        <span class="hljs-keyword">self</span>.rightExpression <span class="hljs-operator">=</span> rightExpression
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">interpret</span>() -&gt; <span class="hljs-type">Int</span> &#123;
+        <span class="hljs-keyword">return</span> leftExpression.interpret() <span class="hljs-operator">+</span> rightExpression.interpret()
+    &#125;
+&#125;
+
+<span class="hljs-comment">// 减法表达式</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">SubtractExpression</span>: <span class="hljs-title class_">Expression</span> &#123;
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> leftExpression: <span class="hljs-type">Expression</span>
+    <span class="hljs-keyword">private</span> <span class="hljs-keyword">var</span> rightExpression: <span class="hljs-type">Expression</span>
+
+    <span class="hljs-keyword">init</span>(<span class="hljs-params">leftExpression</span>: <span class="hljs-type">Expression</span>, <span class="hljs-params">rightExpression</span>: <span class="hljs-type">Expression</span>) &#123;
+        <span class="hljs-keyword">self</span>.leftExpression <span class="hljs-operator">=</span> leftExpression
+        <span class="hljs-keyword">self</span>.rightExpression <span class="hljs-operator">=</span> rightExpression
+    &#125;
+
+    <span class="hljs-keyword">func</span> <span class="hljs-title function_">interpret</span>() -&gt; <span class="hljs-type">Int</span> &#123;
+        <span class="hljs-keyword">return</span> leftExpression.interpret() <span class="hljs-operator">-</span> rightExpression.interpret()
+    &#125;
+&#125;</code></pre></div>
+
+<p>在这个例子中，我们定义了一个解释器对象（Interpreter），它包含一个表达式对象（Expression）。我们还定义了三个不同的表达式类型：数字表达式（NumberExpression）、加法表达式（AddExpression）和减法表达式（SubtractExpression）。</p>
+<p>数字表达式表示一个简单的数字，例如“1”或“2”。加法表达式和减法表达式分别表示加法和减法运算。它们都包含左表达式和右表达式，这些表达式都可以是数字表达式或其他的加法&#x2F;减法表达式。这些表达式实现了一个 <strong><code>interpret()</code></strong> 方法，用于解释表达式，并返回表达式的计算结果。</p>
+<p>现在我们可以使用这些表达式和解释器来解释数学表达式了。例如，我们可以解释一个简单的数学表达式“1 + 2 + 3”，如下所示：</p>
+<div class="code-wrapper"><pre><code class="hljs swift"><span class="hljs-keyword">let</span> expression <span class="hljs-operator">=</span> <span class="hljs-type">AddExpression</span>(
+    leftExpression: <span class="hljs-type">AddExpression</span>(
+        leftExpression: <span class="hljs-type">NumberExpression</span>(value: <span class="hljs-number">1</span>),
+        rightExpression: <span class="hljs-type">NumberExpression</span>(value: <span class="hljs-number">2</span>)
+    ),
+    rightExpression: <span class="hljs-type">NumberExpression</span>(value: <span class="hljs-number">3</span>)
+)
+
+<span class="hljs-keyword">let</span> interpreter <span class="hljs-operator">=</span> <span class="hljs-type">Interpreter</span>(expression: expression)
+<span class="hljs-keyword">let</span> result <span class="hljs-operator">=</span> interpreter.interpret()
+
+<span class="hljs-built_in">print</span>(result) <span class="hljs-comment">// Output: 6</span></code></pre></div>
+
+<p>在这个例子中，我们首先创建了一个加法表达式对象，它由三个数字表达式组成，表示一个简单的加法表达式“1 + 2 + 3”。然后我们创建了一个解释器对象，并传入这个加法表达式对象。最后，我们调用解释器对象的 <strong><code>interpret()</code></strong> 方法，得到这个表达式的计算结果，并将其打印出来。</p>
+<p>解释器模式虽然能够解决一些特定问题领域的语法解析问题，但是在实际开发中使用较少，因为其实现和使用比较复杂。通常情况下，我们可以使用其他的方式来解决类似的问题，比如使用正则表达式或特定的库来解析文本。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="category-chain-item">设计模式</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">#设计模式</a>
+      
+        <a href="/tags/Swift/">#Swift</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>24 种设计模式-3 (Swift 5版)</div>
+      <div>https://icoobin.github.io/2023/02/25/other/24-种设计模式-3-Swift-5版/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年2月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/02/25/other/24-%E7%A7%8D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-2-Swift-5%E7%89%88/" title="24 种设计模式-2 (Swift 5版)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">24 种设计模式-2 (Swift 5版)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/02/25/other/%E5%B8%B8%E7%94%A8%E5%BC%80%E5%8F%91%E5%8E%9F%E5%88%99/" title="常用开发原则">
+                        <span class="hidden-mobile">常用开发原则</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+      <div class="col-lg-7 mx-auto nopadding-x-md">
+        <div class="container custom mx-auto">
+           <script src="/js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script> <script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "/js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> 
+        </div>
+      </div>
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+    
+        <div class="footer-content">
+             <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+        </div>
+        
+            
+                <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+  
+</div>
+
+                    
+                        
+                                    
+</div>
+
+<!-- <script src="js/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script>
+<script>L2Dwidget.init({ pluginRootPath: "live2dw/", pluginJsPath: "lib/", pluginModelPath: "assets/", tagMode: !1, log: !1, model: { jsonPath: "js/live2dw/assets/hijiki.model.json" }, display: { position: "left", hOffset: 60, vOffset: 0, width: 150, height: 300 }, mobile: { show: !1 } })</script> -->
+
+<!--
+<div id="music_div" style="position: fixed; bottom: 0px; left: 30px;">
+    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110
+        src="//music.163.com/outchain/player?type=0&id=919444742&auto=1&height=90">
+    </iframe>
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/js/musicshow.js"></script>
+</div>
+-->
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
