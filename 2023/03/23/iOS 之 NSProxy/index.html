@@ -16,23 +16,27 @@
   <meta name="author" content="程守斌">
   <meta name="keywords" content="">
   
-    <meta name="description" content="临渊羡鱼不如退而结网">
-<meta property="og:type" content="website">
-<meta property="og:title" content="关于">
-<meta property="og:url" content="https://icoobin.github.io/about/index.html">
+    <meta name="description" content="iOS 之 NSProxy在 Objective-C 语言中，NSProxy 是一个非常特殊又很用于的类，它与 NSObject 类有相同的结构，但它却不继承自 NSObject。NSProxy 设计的主要功能是用来消息转发。与继承自 NSObject 类不同的是，如果方法没找到将直接进入消息转发环节。因此比继承 NSObject 来实现消息转发性能更高。 NSProxy 能解决什么问题 解决循环">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 之 NSProxy">
+<meta property="og:url" content="https://icoobin.github.io/2023/03/23/iOS%20%E4%B9%8B%20NSProxy/index.html">
 <meta property="og:site_name" content="Bin&#39;s blog">
-<meta property="og:description" content="临渊羡鱼不如退而结网">
+<meta property="og:description" content="iOS 之 NSProxy在 Objective-C 语言中，NSProxy 是一个非常特殊又很用于的类，它与 NSObject 类有相同的结构，但它却不继承自 NSObject。NSProxy 设计的主要功能是用来消息转发。与继承自 NSObject 类不同的是，如果方法没找到将直接进入消息转发环节。因此比继承 NSObject 来实现消息转发性能更高。 NSProxy 能解决什么问题 解决循环">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-24T23:38:53.000Z">
-<meta property="article:modified_time" content="2023-02-26T19:37:12.587Z">
+<meta property="og:image" content="https://icoobin.github.io/img/index/proxy.jpeg">
+<meta property="article:published_time" content="2023-03-23T05:42:06.000Z">
+<meta property="article:modified_time" content="2023-03-23T06:22:21.137Z">
 <meta property="article:author" content="程守斌">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Objective-C">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://icoobin.github.io/img/index/proxy.jpeg">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>关于 - Bin&#39;s blog</title>
+  <title>iOS 之 NSProxy - Bin&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -120,7 +124,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 48.2vh;">
+<div class="header-inner" style="height: 38.2vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -220,15 +224,63 @@
   
 
 <div id="banner" class="banner" parallax=true
-     style="background: url('/img/banner/about.jpg') no-repeat center center; background-size: cover;">
+     style="background: url('/img/banner/posts.jpg') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle">关于</span>
+            <span id="subtitle" data-typed-text="iOS 之 NSProxy"></span>
           
         </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-23 13:42" pubdate>
+          2023年3月23日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          11 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
 
         
       </div>
@@ -244,63 +296,222 @@
 
   <main>
     
-      <div class="container nopadding-x-md">
-        <div id="board"
-          >
-          
-            <div class="about-avatar">
-              <img src="/img/set/avatar.png" srcset="/img/set/loading.gif" lazyload class="img-fluid" alt="avatar">
-            </div>
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
+      
 
-<div class="text-center">
-  <div class="about-info">
-    <div class="about-name">程守斌</div>
-    <div class="about-intro">一名 iOS 程序员</div>
-    <div class="about-icons">
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
       
-        
-        
-        
-        <a href=https://github.com/iCoobin class="
-           hint--bottom hint--rounded"
-           aria-label=GitHub
-           target="_blank"
-        >
-          <i class="iconfont icon-github-fill" aria-hidden="true"></i>
-          
-        </a>
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">iOS 之 NSProxy</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="iOS-之-NSProxy"><a href="#iOS-之-NSProxy" class="headerlink" title="iOS 之 NSProxy"></a>iOS 之 NSProxy</h2><p>在 Objective-C 语言中，NSProxy 是一个非常特殊又很用于的类，它与 NSObject 类有相同的结构，但它却不继承自 NSObject。<br>NSProxy 设计的主要功能是用来消息转发。与继承自 NSObject 类不同的是，如果方法没找到将直接进入消息转发环节。<br>因此比继承 NSObject 来实现消息转发性能更高。</p>
+<h3 id="NSProxy-能解决什么问题"><a href="#NSProxy-能解决什么问题" class="headerlink" title="NSProxy 能解决什么问题"></a>NSProxy 能解决什么问题</h3><ul>
+<li>解决循环引用问题<ul>
+<li>CADisplayLink 对 target 的循环引用</li>
+<li>NSTimer 对 target 的循环引用</li>
+<li>在开发的订阅者模式，循环引用问题。</li>
+</ul>
+</li>
+<li>可以实现额外的 AOP 功能<ul>
+<li>通过消息转发，记录埋点、日志等</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><ul>
+<li>MyProxy 继承自 NSProxy</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc">
+<span class="hljs-class"><span class="hljs-keyword">@interface</span> <span class="hljs-title">MyProxy</span> : <span class="hljs-title">NSProxy</span></span>
+<span class="hljs-keyword">@property</span> (<span class="hljs-keyword">nonatomic</span>, <span class="hljs-keyword">weak</span>) <span class="hljs-type">id</span> target;
+<span class="hljs-keyword">@end</span>
+
+<span class="hljs-class"><span class="hljs-keyword">@implementation</span> <span class="hljs-title">MyProxy</span></span>
+
+- (<span class="hljs-keyword">instancetype</span>)initWithTarget:(<span class="hljs-type">id</span>)target &#123;
+    <span class="hljs-comment">// NSProxy 是没有 init 方法的，需要子类自己实现</span>
+    _target = target;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">self</span>;
+&#125;
+
+- (<span class="hljs-type">void</span>)forwardInvocation:(<span class="hljs-built_in">NSInvocation</span> *)invocation &#123;
+    SEL sel = [invocation selector];
+    <span class="hljs-keyword">if</span> ([_target respondsToSelector:sel]) &#123;
+        [invocation invokeWithTarget:_target];
+    &#125; <span class="hljs-keyword">else</span> &#123;
+        <span class="hljs-comment">// 拦截某些消息</span>
+        <span class="hljs-keyword">if</span> (sel == <span class="hljs-keyword">@selector</span>(doSomething)) &#123;
+            <span class="hljs-built_in">NSLog</span>(<span class="hljs-string">@&quot;doSomething is intercepted.&quot;</span>);
+            <span class="hljs-keyword">return</span>;
+        &#125;
+        [<span class="hljs-variable language_">super</span> forwardInvocation:invocation];
+    &#125;
+&#125;
+
+- (<span class="hljs-built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)sel &#123;
+    <span class="hljs-keyword">return</span> [_target methodSignatureForSelector:sel];
+&#125;
+
+<span class="hljs-keyword">@end</span>
+</code></pre></div>
+
+<ul>
+<li>解决 CADisplayLink 和 NSTimer 循环引用问题</li>
+</ul>
+<div class="code-wrapper"><pre><code class="hljs objc">
+<span class="hljs-comment">/// 解决 CADisplayLink 循环引用问题</span>
+<span class="hljs-keyword">self</span>.link = [<span class="hljs-built_in">CADisplayLink</span> displayLinkWithTarget:[[MyProxy alloc] initWithTarget:<span class="hljs-keyword">self</span>] 
+                                        selector:<span class="hljs-keyword">@selector</span>(doSomething)];
+
+<span class="hljs-comment">/// 解决 NStimer 循环引用问题</span>
+<span class="hljs-keyword">self</span>.timer = [[<span class="hljs-built_in">NSTimer</span> timerWithTimeInterval:<span class="hljs-number">0.1</span> 
+                                      target:[[MyProxy alloc] initWithTarget:<span class="hljs-keyword">self</span>] 
+                                    selector:<span class="hljs-keyword">@selector</span>(doSomething) 
+                                    userInfo:<span class="hljs-literal">nil</span> 
+                                     repeats:<span class="hljs-literal">YES</span>];
+</code></pre></div>
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
       
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
         
-        
-        
-        <a  class="qr-trigger
-           "
-           
-           target="_self"
-        >
-          <i class="iconfont icon-wechat-fill" aria-hidden="true"></i>
-          
-            <img class="qr-img" src="/img/set/wechat_qrcode.jpg" srcset="/img/set/loading.gif" lazyload alt="qrcode" />
-          
-        </a>
+  <a href="/categories/iOS/" class="category-chain-item">iOS</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
       
+        <a href="/tags/iOS/">#iOS</a>
+      
+        <a href="/tags/Objective-C/">#Objective-C</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>iOS 之 NSProxy</div>
+      <div>https://icoobin.github.io/2023/03/23/iOS 之 NSProxy/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>程守斌</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/22/ios/iOS-%E5%90%84%E7%A7%8D%E9%94%81/" title="iOS 各种锁">
+                        <span class="hidden-mobile">iOS 各种锁</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
     </div>
   </div>
 </div>
 
-<article class="about-content page-content mt-5">
-  <div class="markdown-body">
-    <h2 id="临渊羡鱼不如退而结网"><a href="#临渊羡鱼不如退而结网" class="headerlink" title="临渊羡鱼不如退而结网"></a><center>临渊羡鱼不如退而结网</center></h2>
-  </div>
-
-  
-</article>
-
 
 
 
@@ -327,11 +538,8 @@
 
 
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+
     
 
     
@@ -444,6 +652,21 @@
 <script  src="/js/plugins.js" ></script>
 
 
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
 
 
 
@@ -452,6 +675,46 @@
   
 
 
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
 
 
   <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
